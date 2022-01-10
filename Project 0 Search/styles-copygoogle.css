@@ -1,0 +1,33 @@
+/* an attempt to (very closely) recreate Google's stylesheet for Search, Images,
+and Advanced Search*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Roboto', arial, sans-serif;
+}
+
+nav {
+    text-align: right;
+}
+nav > ul {
+    /* display: flex; */
+    align-items: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    float: right;
+}
+nav > ul > li {
+    float: left;
+    margin: 0 10px;
+    font-size: 13px;
+}
+main {
+    margin-left: auto;
+    margin-right: auto;
+    display: block
+}

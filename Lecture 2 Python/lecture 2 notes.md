@@ -23,6 +23,7 @@ name.py with fstrings:
 ->Name: Dave  
 ->Hello, Dave! 
 
+
 ## Conditions
 if conditionA:  
     expression1  
@@ -112,6 +113,7 @@ put ```square(x)``` into a new file ```functions.py```, then use ```squares.py``
 ```from functions import square```, then use ```square()``` in code, or,  
 ```import functions```, then use ```functions.square()``` in code  
 Many modules available to use  
+
 
 ## Object-Oriented Programming
 A style of programming centered on objects that store information and perform

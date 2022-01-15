@@ -53,7 +53,8 @@ The app "hello" now exists in the Django project
 
 ## Routes
 The most basic route is the index, at ```/```, and requests to it are handled by
-a function that represents a view.  
+a function that represents a view. Views.py describes what a user sees when they
+view a particular route.  
 
 In hello/views.py:
 ```from django.http import HttpResponse```  

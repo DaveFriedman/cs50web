@@ -1,0 +1,25 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Update Page 
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h1>Update Entry: {{title}}</h1>
+    </div>
+
+    <div>
+        <form action="{% url 'update' title %}" method="POST">
+
+            {% csrf_token %}
+
+            <p>{{form.as_p}}</p>
+            
+            <input type="submit" value="Save" class="btn btn-success">
+        
+        </form>
+    </div>
+
+{% endblock %}

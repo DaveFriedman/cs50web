@@ -134,7 +134,7 @@ def search(request):
         return HttpResponseRedirect(
             reverse("read", kwargs={"title": query}))
 
-    # Otherwise, display the queries
+    # Otherwise, display the search results
     return render(request, "encyclopedia/search_results.html", {
         "results": results
     })

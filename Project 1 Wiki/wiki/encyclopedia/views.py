@@ -1,4 +1,3 @@
-from django import forms
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -8,24 +7,8 @@ from difflib import get_close_matches
 from markdown import markdown
 from random import choice
 
+from . import forms
 from . import util
-
-class create_entry_form(forms.Form):
-
-    title = forms.CharField(label="Title", initial="title")
-    body = forms.CharField(
-        label="Body", 
-        widget=forms.Textarea(attrs={"style": "height:50%; width:75%"})
-        )
-
-
-class update_entry_form(forms.Form):
-
-    title = forms.CharField(label="Title", initial="title")
-    body = forms.CharField(
-        label="Body",
-        widget=forms.Textarea(attrs={"style": "height:50%; width:75%"})
-        )
 
 
 def index(request):
@@ -38,21 +21,19 @@ def index(request):
 def create_entry(request, title=None):
 
     if request.method == "POST":
-        form = create_entry_form(request.POST)
+        form = forms.entry_form(request.POST)
 
         if form.is_valid():
-
             title = form.cleaned_data["title"]
             body = form.cleaned_data["body"]
             
             if not util.get_entry(title):
-
                 util.save_entry(title, bytes(body, "utf8"))
+
                 messages.success(request, f"Entry '{title}' has been added!")
                 return HttpResponseRedirect(
                     reverse("read", kwargs={"title": title}))
             
-            # error message here
             else:
                 messages.error(request, f"Entry '{title}' could not be added.")
                 return render(request, "encyclopedia/create_entry.html", {
@@ -61,7 +42,7 @@ def create_entry(request, title=None):
 
     else:
         return render(request, "encyclopedia/create_entry.html", {
-            "form": create_entry_form(initial={"title": title})
+            "form": forms.entry_form(initial={"title": title})
         })
 
 
@@ -82,7 +63,7 @@ def read_entry(request, title):
 def update_entry(request, title):
 
     if request.method == "POST":
-        form = update_entry_form(request.POST)
+        form = forms.entry_form(request.POST)
 
         if form.is_valid():
             title = form.cleaned_data["title"]
@@ -105,7 +86,7 @@ def update_entry(request, title):
 
         return render(request, "encyclopedia/update_entry.html", {
             "title": title,
-            "form": update_entry_form(initial={
+            "form": forms.entry_form(initial={
                 "title": title, 
                 "body": body
                 })
@@ -117,6 +98,7 @@ def delete_entry(request, title):
     if util.get_entry(title):
         util.remove_entry(title)
         messages.success(request, f"Entry '{title}' has been deleted.")
+
     else:
         messages.error(request, f"Entry '{title}' was not deleted.")
     
@@ -147,7 +129,7 @@ def search(request):
     results_c = get_close_matches(query_c, titles_c, cutoff=.4)
     results = [t for t in titles if t.casefold() in results_c]
 
-    # Send queries with no close matches to a noentry page for that query 
+    # Send queries with no close matches to a no_entry page for that query 
     if not results:
         return HttpResponseRedirect(
             reverse("read", kwargs={"title": query}))

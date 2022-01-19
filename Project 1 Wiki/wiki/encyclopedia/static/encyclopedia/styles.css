@@ -1,6 +1,15 @@
+/* color palette: https://www.schemecolor.com/dark-wood-gradient.php */
+/* lighter options https://www.schemecolor.com/light-wood-gradient.php */
+
 body {
     margin: 0;
-    background-color: white;
+    /* dark: 6 */
+    background-color: #453B3B;
+    /* dark: 5 */
+    /* background-color: #564540;  */
+
+    color: white;
+    padding-inline-start: 0;
 }
 .row {
     margin: 0;
@@ -11,8 +20,7 @@ code {
 }
 
 h1 {
-    margin-top: 0px;
-    margin-bottom: 20px;
+    margin: 0 0 20px 0px;
     padding-top: 5px;
 }
 
@@ -21,8 +29,29 @@ textarea {
     width: 80%;
 }
 
+.btn {
+    margin-top: 5px;
+    width: 75%;
+}
+
+.btn-secondary {
+    /* dark: 1 */
+    background-color: #705548;
+    /* dark: 2 */ 
+    border-color: #675045; 
+    font-weight: 500;
+}
+.btn-secondary:hover,
+.btn-secondary:active,
+.btn-secondary:focus,
+.btn-secondary.active {
+    /* dark: 3 */
+    background-color: #5F4B43 !important; 
+    border-color: #5F4B43;
+}
+
 .main {
-    padding: 10px;
+    padding: 20px;
 }
 
 .search {
@@ -32,18 +61,25 @@ textarea {
 }
 
 .sidebar {
-    background-color: #f0f0f0;
+    /* dark: 4 */
+    /* background-color: #564540;  */
+    /* dark: 5 */
+    background-color: #4E403E; 
     height: 100vh;
     padding: 20px;
 }
 
 .sidebar h2 {
     margin-top: 5px;
+    margin-bottom: 0;
 }
 
  /* Small devices (landscape phones, less than 768px) */
 @media (max-width: 767.98px) { 
     .sidebar {
         height: auto;
+    }
+    .btn {
+        width: 100%;
     }
  }

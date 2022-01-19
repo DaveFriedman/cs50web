@@ -5,12 +5,15 @@
 {% endblock %}
 
 {% block body %}
-    <h1>All Pages</h1>
+    <h1>All Entries</h1>
 
-    <ul>
         {% for entry in entries %}
-            <li><a href="/wiki/{{entry}}">{{entry}}</a></li>
+
+            <div class="index">
+                <a role="button" class="btn btn-secondary btn-block"
+                   href="/wiki/{{entry}}">{{entry}}</a>
+            </div>
+
         {% endfor %}
-    </ul>
 
 {% endblock %}

@@ -11,9 +11,6 @@ body {
     color: white;
     padding-inline-start: 0;
 }
-.row {
-    margin: 0;
-}
 
 code {
     white-space: pre;
@@ -22,11 +19,6 @@ code {
 h1 {
     margin: 0 0 20px 0px;
     padding-top: 5px;
-}
-
-textarea {
-    height: 90vh;
-    width: 80%;
 }
 
 .btn {
@@ -50,8 +42,16 @@ textarea {
     border-color: #5F4B43;
 }
 
+.entry_form {
+    width: 85%;
+}
+
 .main {
     padding: 20px;
+}
+
+.row {
+    margin: 0;
 }
 
 .search {
@@ -80,6 +80,9 @@ textarea {
         height: auto;
     }
     .btn {
+        width: 100%;
+    }
+    .entry_form {
         width: 100%;
     }
  }

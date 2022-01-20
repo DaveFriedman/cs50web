@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -70,6 +71,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wiki.wsgi.application'
 
+
+# Crispy Forms Template
+# https://django-crispy-forms.readthedocs.io/en/latest/index.html
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

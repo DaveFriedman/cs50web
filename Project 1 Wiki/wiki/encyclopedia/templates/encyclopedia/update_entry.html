@@ -1,4 +1,5 @@
 {% extends "encyclopedia/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}
     Update Entry 
@@ -10,12 +11,12 @@
         <h1>Update Entry: {{title}}</h1>
     </div>
 
-    <div>
+    <div class=entry_form>
         <form action="{% url 'update' title %}" method="POST">
 
             {% csrf_token %}
 
-            <p>{{form.as_p}}</p>
+            {{form|crispy}}
             
             <input type="submit" value="Save" class="btn btn-success">
         

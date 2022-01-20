@@ -114,6 +114,10 @@ def random(request):
 
 def search(request):
 
+    if not request.GET.get("q"):
+        messages.error(request, "Invalid or empty search")
+        return HttpResponseRedirect(reverse("index"))
+
     query = request.GET.get("q")
     titles = util.list_entries()
 
@@ -126,7 +130,7 @@ def search(request):
                 reverse("read", kwargs={"title": t}))
 
     # Get a list of close matches
-    results_c = get_close_matches(query_c, titles_c, cutoff=.4)
+    results_c = get_close_matches(query_c, titles_c, cutoff=.33)
     results = [t for t in titles if t.casefold() in results_c]
 
     # Send queries with no close matches to a no_entry page for that query 

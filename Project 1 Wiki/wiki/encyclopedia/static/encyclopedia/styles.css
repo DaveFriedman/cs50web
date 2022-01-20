@@ -7,7 +7,6 @@ body {
     background-color: #453B3B;
     /* dark: 5 */
     /* background-color: #564540;  */
-
     color: white;
     padding-inline-start: 0;
 }
@@ -19,6 +18,10 @@ code {
 h1 {
     margin: 0 0 20px 0px;
     padding-top: 5px;
+}
+
+p {
+    width: 85%;
 }
 
 .btn {
@@ -38,8 +41,24 @@ h1 {
 .btn-secondary:focus,
 .btn-secondary.active {
     /* dark: 3 */
-    background-color: #5F4B43 !important; 
+    background-color: #5F4B43; 
     border-color: #5F4B43;
+}
+
+#button-search {
+    margin-top: 0;
+    width: auto;
+    background-color: #fff;
+    border: 1px #ced4da;
+    border-style: solid solid solid none;
+}
+#button-search:hover,
+#button-search:active,
+#button-search:focus
+ {
+    background-color: #ccc;
+    border-color: 1px  #ccc;
+    box-shadow: none;
 }
 
 .entry_form {
@@ -50,12 +69,16 @@ h1 {
     padding: 20px;
 }
 
+.messages {
+    width: 85%;
+}
+
 .row {
     margin: 0;
 }
 
 .search {
-    width: 100%;
+    width: 80%;
     font-size: 15px;
     line-height: 15px;
 }
@@ -76,13 +99,19 @@ h1 {
 
  /* Small devices (landscape phones, less than 768px) */
 @media (max-width: 767.98px) { 
-    .sidebar {
-        height: auto;
+    p {
+        width: 100%;
     }
     .btn {
         width: 100%;
     }
     .entry_form {
         width: 100%;
+    }
+    .messages {
+        width: 100%;
+    }
+    .sidebar {
+        height: auto;
     }
  }

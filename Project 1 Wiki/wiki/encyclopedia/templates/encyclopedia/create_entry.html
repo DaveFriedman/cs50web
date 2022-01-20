@@ -6,21 +6,19 @@
 {% endblock %}
 
 {% block body %}
-
     <div>
         <h1>Create New Entry</h1>
     </div>
 
-    <div class=entry_form>
+    <div class="entry_form">
         <form action="{% url 'create' %}" method="POST">
 
             {% csrf_token %}
 
-            {{form|crispy}}
+            {{form | crispy}}
 
             <input type="submit" value="Save" class="btn btn-success">
 
         </form>
-    </div>
-    
+    </div>    
 {% endblock %}

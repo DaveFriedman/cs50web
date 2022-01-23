@@ -29,7 +29,14 @@ def update_listing(request):
 def delete_listing(request):
     pass
 
+def random(request):
+    pass
 
+def search(request):
+    pass
+
+def watchlist(request):
+    pass
 
 def login_view(request):
     if request.method == "POST":

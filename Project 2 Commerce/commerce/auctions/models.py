@@ -1,3 +1,4 @@
+from tkinter import CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -15,7 +16,7 @@ class Listing(models.Model):
         & Hobbies, Sports, Health & Beauty, Books, Movies & Music, Business & 
         Industrial, Home & Garden, Others
         """
-        
+
         ELECTRONICS = "EL", _("Electronics")
         COLLECTIBLES_ART = "CO", _("Collectibles & Art")
         FASHION = "FA", _("Fashion")
@@ -32,11 +33,11 @@ class Listing(models.Model):
     quantity = models.IntegerField(default=1)
     is_returnable = models.BooleanField()
     description = models.TextField(max_length=480)
-    category = models.CharField(choices=categories.choices)
+    category = models.CharField(choices=categories.choices, max_length=24)
 
-    list_price = models.DecimalField(decimal_places=2)
-    buynow_price = models.DecimalField(decimal_places=2)    
-    ship_price = models.DecimalField(decimal_places=2)
+    list_price = models.DecimalField(max_digits=9, decimal_places=2)
+    buynow_price = models.DecimalField(max_digits=9, decimal_places=2)    
+    ship_price = models.DecimalField(max_digits=9, decimal_places=2)
 
     listing_start = models.DateTimeField(auto_now_add=True)
     listing_end = models.DateTimeField()
@@ -57,9 +58,9 @@ class Listing(models.Model):
                 description: {self.description}"
 
 
-class Bid():
+class Bid(models.Model):
 
-    bid_price = models.DecimalField(decimal_places=2)
+    bid_price = models.DecimalField(max_digits=9, decimal_places=2)
     bid_time = models.DateTimeField(auto_now_add=True)
     bidder = models.ForeignKey('User', on_delete=models.CASCADE)
     listing = models.ForeignKey('Listing', on_delete=models.CASCADE)
@@ -72,16 +73,16 @@ class Bid():
                 {self.listing} at {self.bid_time}"
 
 
-class Comment():
+class Comment(models.Model):
 
     comment = models.TextField(max_length=280)
     is_hidden = models.BooleanField()
 
     commented = models.DateTimeField(auto_now_add=True)
-    commenter = models.ForeignKey('User')
+    commenter = models.ForeignKey('User', on_delete=models.CASCADE)
 
     listing = models.ForeignKey('Listing', on_delete=models.CASCADE)
-    parent = models.ForeignKey('self')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name="parent_comment")
 
     def __str__(self):
         return f"Comment {self.id}: {self.commenter} posted on {self.listing}"

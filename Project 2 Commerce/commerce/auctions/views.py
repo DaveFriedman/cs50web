@@ -1,14 +1,34 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from . import models, forms
+# from .models import User, Listing, Bid, Comment
+# from .forms import ListingForm, BidForm, CommentForm
 
 
 def index(request):
     return render(request, "auctions/index.html")
+
+
+def create_listing(request):
+    pass
+
+
+def read_listing(request):
+    pass
+
+
+def update_listing(request):
+    pass
+
+@login_required
+def delete_listing(request):
+    pass
+
 
 
 def login_view(request):
@@ -51,7 +71,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            user = models.User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
             return render(request, "auctions/register.html", {

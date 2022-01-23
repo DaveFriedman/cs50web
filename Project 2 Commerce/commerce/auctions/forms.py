@@ -7,15 +7,16 @@ from .models import Listing, Bid, Comment
 class ListingForm(ModelForm):
     class Meta:
         mode = Listing
-        # Are fields lists[] or tuples()? confusing:
+        # Are fields lists[] or tuples()? it's confusing:
         # https://docs.djangoproject.com/en/4.0/topics/forms/modelforms/
         
-        fields = ["name", "quantity", "list_price", "ship_price", "buynow_price"
-                  ,"description","listing_timeout", "is_returnable"]
+        fields = ["name", "quantity", "category", "is_returnable", "list_price", 
+                 "ship_price", "buynow_price", "description", "listing_timeout"]
         
         labels = {
             "name": _("Item name"),
             "quantity": _("Item quantity"),
+            "category": _("Item category"),
             "list_price": _("Minimum bid"),
             "ship_price": _("Shipping cost"),
             "buynow_price": _("Buy now bid"),

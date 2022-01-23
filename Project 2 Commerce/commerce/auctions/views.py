@@ -11,7 +11,9 @@ from . import models, forms
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        "listings": models.Listing.objects.all()
+    })
 
 
 def create_listing(request):

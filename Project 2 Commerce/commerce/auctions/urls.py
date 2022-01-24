@@ -14,9 +14,10 @@ urlpatterns = [
     path("search",              views.search,           name="search"),
     path("watchlist",           views.watchlist,        name="watchlist"),
     
-    # possible change to /accounts/login, per
-    # https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-LOGIN_URL 
     path("login",               views.login_view,       name="login"),
     path("logout",              views.logout_view,      name="logout"),
-    path("register",            views.register,         name="register"),
+    path("register",            views.register,         name="register")
 ]
+
+    # possible change to /accounts/login, per
+    # https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-LOGIN_URL 

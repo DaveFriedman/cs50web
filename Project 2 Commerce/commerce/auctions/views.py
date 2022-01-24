@@ -11,13 +11,38 @@ from . import models, forms
 
 
 def index(request):
-    return render(request, "auctions/index.html", {
-        "listings": models.Listing.objects.all()
-    })
+    return render(request, "auctions/index.html")
+    # {
+    #     "listings": models.Listing.objects.all()
+    # })
 
 
 def create_listing(request):
-    pass
+
+    if request.method == "POST":
+        form = forms.ListingForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            # name = form.cleaned_data['name']
+            # quantity = form.cleaned_data['quantity']
+            # is_returnable = form.cleaned_data['is_returnable']
+            # category = form.cleaned_data['category']
+            # description = form.cleaned_data['description']
+
+            # list_price = form.cleaned_data['list_price']
+            # ship_price = form.cleaned_data['ship_price']
+            # buynow_price = form.cleaned_data['buynow_price']
+
+            # listing_timeout = form.cleaned_data['listing_timeout']
+
+        pass
+
+    else:
+        return render(request, "auctions/create_listing.html", {
+            "form": forms.ListingForm()
+        })
 
 
 def read_listing(request):
@@ -27,18 +52,23 @@ def read_listing(request):
 def update_listing(request):
     pass
 
+
 @login_required
 def delete_listing(request):
     pass
 
+
 def random(request):
     pass
+
 
 def search(request):
     pass
 
+
 def watchlist(request):
     pass
+
 
 def login_view(request):
     if request.method == "POST":

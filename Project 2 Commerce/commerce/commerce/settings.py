@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+
 ]
 
 MIDDLEWARE = [
@@ -69,6 +71,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'commerce.wsgi.application'
+
+
+# Crispy Forms Template
+# https://django-crispy-forms.readthedocs.io/en/latest/index.html
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 
 # Database

@@ -1,4 +1,3 @@
-from tkinter import CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -17,23 +16,23 @@ class Listing(models.Model):
         Industrial, Home & Garden, Others
         """
 
-        ELECTRONICS = "EL", _("Electronics")
-        COLLECTIBLES_ART = "CO", _("Collectibles & Art")
-        FASHION = "FA", _("Fashion")
-        MOTORS = "MO", _("Motors")
-        TOYS_HOBBIES = "TO", _("Toys & Hobbies")
-        SPORTS = "SP", _("Sports")
-        HEALTH_BEAUTY = "HE", _("Health & Beauty")
-        BOOKS_MOVIES_MUSIC = "BO", _("Books, Movies & Music")
+        ELECTRONICS =         "EL", _("Electronics")
+        COLLECTIBLES_ART =    "CO", _("Collectibles & Art")
+        FASHION =             "FA", _("Fashion")
+        MOTORS =              "MO", _("Motors")
+        TOYS_HOBBIES =        "TO", _("Toys & Hobbies")
+        SPORTS =              "SP", _("Sports")
+        HEALTH_BEAUTY =       "HE", _("Health & Beauty")
+        BOOKS_MOVIES_MUSIC =  "BO", _("Books, Movies & Music")
         BUSINESS_INDUSTRIAL = "BU", _("Business & Industrial")
-        HOME_GARDEN = "HO", _("Home & Garden")
-        OTHER = "OT", _("Other")
+        HOME_GARDEN =         "HO", _("Home & Garden")
+        OTHER =               "OT", _("Other")
 
     name = models.CharField(max_length=64)
     quantity = models.IntegerField(default=1)
     is_returnable = models.BooleanField()
-    description = models.TextField(max_length=480)
     category = models.CharField(choices=categories.choices, max_length=24)
+    description = models.TextField(max_length=480)
 
     list_price = models.DecimalField(max_digits=9, decimal_places=2)
     buynow_price = models.DecimalField(max_digits=9, decimal_places=2)    
@@ -43,7 +42,7 @@ class Listing(models.Model):
     listing_end = models.DateTimeField()
     listing_timeout = models.DateTimeField()
 
-    lister = models.ForeignKey('User', on_delete=models.CASCADE)
+    lister = models.ForeignKey("User", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Listing {self.id}: {self.lister}'s {self.name}"

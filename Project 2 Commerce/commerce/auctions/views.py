@@ -11,12 +11,11 @@ from . import models, forms
 
 
 def index(request):
-    return render(request, "auctions/index.html")
-    # {
-    #     "listings": models.Listing.objects.all()
-    # })
+    return render(request, "auctions/index.html", {
+        "listings": models.Listing.objects.all()
+    })
 
-
+@login_required
 def create_listing(request):
 
     if request.method == "POST":
@@ -45,10 +44,16 @@ def create_listing(request):
         })
 
 
-def read_listing(request):
-    pass
+def read_listing(request, id, name):
+    """
+    TODO: Comments
+    """
+    listing = models.Listing.objects.get(id=id)
+    return render(request, "auctions/listing.html", {
+        "listing": listing
+    })
 
-
+@login_required
 def update_listing(request):
     pass
 

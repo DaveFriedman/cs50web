@@ -7,8 +7,8 @@ urlpatterns = [
 
     path("create",              views.create_listing,   name="create"),
     path("<int:id>/<str:name>", views.read_listing,     name="read"),
-    path("<int:id>/update",     views.update_listing,   name="update"),
-    path("<int:id>/delete",     views.delete_listing,   name="delete"),
+    # path("<int:id>/update",     views.update_listing,   name="update"),
+    # path("<int:id>/delete",     views.delete_listing,   name="delete"),
 
     path("random",              views.random,           name="random"),
     path("search",              views.search,           name="search"),

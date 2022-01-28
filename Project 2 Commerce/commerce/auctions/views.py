@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -22,21 +25,40 @@ def create_listing(request):
         form = forms.ListingForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            try:
+                listing = models.Listing.objects.create(
+                    name = form.cleaned_data["name"],
+                    quantity = form.cleaned_data["quantity"],
+                    is_returnable = form.cleaned_data["is_returnable"],
+                    category = form.cleaned_data["category"],
+                    description = form.cleaned_data["description"],
 
-            # name = form.cleaned_data['name']
-            # quantity = form.cleaned_data['quantity']
-            # is_returnable = form.cleaned_data['is_returnable']
-            # category = form.cleaned_data['category']
-            # description = form.cleaned_data['description']
+                    list_price = form.cleaned_data["list_price"],
+                    buynow_price = form.cleaned_data["buynow_price"],
+                    ship_price = form.cleaned_data["ship_price"],
 
-            # list_price = form.cleaned_data['list_price']
-            # ship_price = form.cleaned_data['ship_price']
-            # buynow_price = form.cleaned_data['buynow_price']
+                    listing_start = datetime.now(),
+                    listing_timeout = form.cleaned_data["listing_timeout"],
+                    listing_end = form.cleaned_data["listing_timeout"],
 
-            # listing_timeout = form.cleaned_data['listing_timeout']
+                    lister = models.User.objects.get(pk=request.user.id)
+                )
+                listing.save()            
 
-        pass
+                messages.success(request, f"'{listing.name}' has been listed!")
+                return HttpResponseRedirect(reverse(
+                    "read", kwargs={"id": listing.id, "name": listing.name}))
+            
+            except IntegrityError as e:
+                messages.error(request, f"{e.__cause__}")
+                return render(request, "auctions/create_listing.html", {
+                    "form": form})
+
+        else:
+            # messages.error(request, f"Your submission has errors:") #form.errors
+            return render(request, "auctions/create_listing.html", {
+                "form": form
+            })
 
     else:
         return render(request, "auctions/create_listing.html", {
@@ -46,21 +68,22 @@ def create_listing(request):
 
 def read_listing(request, id, name):
     """
-    TODO: Comments
+    TODO: Auction comments
     """
     listing = models.Listing.objects.get(id=id)
     return render(request, "auctions/listing.html", {
         "listing": listing
     })
 
-@login_required
-def update_listing(request):
-    pass
+# @login_required
+# def update_listing(request):
+#     # https://dev.to/sankalpjonna/save-your-django-models-using-updatefields-for-better-performance-50ig
+#     pass
 
 
-@login_required
-def delete_listing(request):
-    pass
+# @login_required
+# def delete_listing(request):
+#     pass
 
 
 def random(request):

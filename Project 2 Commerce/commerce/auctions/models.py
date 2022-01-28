@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.db.models import *
 from django.utils.translation import gettext_lazy as _
 
 
@@ -7,9 +7,9 @@ class User(AbstractUser):
     pass
 
 
-class Listing(models.Model):
+class Listing(Model):
 
-    class categories(models.TextChoices):
+    class categories(TextChoices):
         """
         Ebay categories: Electronics, Collectibles & Art, Fashion, Motors, Toys  
         & Hobbies, Sports, Health & Beauty, Books, Movies & Music, Business & 
@@ -28,21 +28,22 @@ class Listing(models.Model):
         HOME_GARDEN =         "HO", _("Home & Garden")
         OTHER =               "OT", _("Other")
 
-    name = models.CharField(max_length=64)
-    quantity = models.IntegerField(default=1)
-    is_returnable = models.BooleanField()
-    category = models.CharField(choices=categories.choices, max_length=24)
-    description = models.TextField(max_length=480)
+    name = CharField(max_length=64)
+    quantity = IntegerField(default=1)
+    is_returnable = BooleanField()
+    category = CharField(choices=categories.choices, max_length=24)
+    description = TextField(max_length=480)
 
-    list_price = models.DecimalField(max_digits=9, decimal_places=2)
-    buynow_price = models.DecimalField(max_digits=9, decimal_places=2)    
-    ship_price = models.DecimalField(max_digits=9, decimal_places=2)
+    list_price = DecimalField(max_digits=9, decimal_places=2)
+    buynow_price = DecimalField(max_digits=9, decimal_places=2, default=None)    
+    ship_price = DecimalField(max_digits=9, decimal_places=2)
 
-    listing_start = models.DateTimeField(auto_now_add=True)
-    listing_end = models.DateTimeField()
-    listing_timeout = models.DateTimeField()
+    listing_start = DateTimeField()
+    # listing_updated = DateTimeField()
+    listing_end = DateTimeField()
+    listing_timeout = DateTimeField()
 
-    lister = models.ForeignKey("User", on_delete=models.CASCADE)
+    lister = ForeignKey(User, on_delete=CASCADE)
 
     def __str__(self):
         return f"Listing {self.id}: {self.lister}'s {self.name}"
@@ -57,12 +58,13 @@ class Listing(models.Model):
                 description: {self.description}"
 
 
-class Bid(models.Model):
+class Bid(Model):
 
-    bid_price = models.DecimalField(max_digits=9, decimal_places=2)
-    bid_time = models.DateTimeField(auto_now_add=True)
-    bidder = models.ForeignKey('User', on_delete=models.CASCADE)
-    listing = models.ForeignKey('Listing', on_delete=models.CASCADE)
+    bid_price = DecimalField(max_digits=9, decimal_places=2)
+    bid_time = DateTimeField(auto_now_add=True)
+    
+    bidder = ForeignKey(User, on_delete=CASCADE)
+    listing = ForeignKey(Listing, on_delete=CASCADE)
 
     def __str__(self):
         return f"Bid {self.id}: {self.bid_price} on {self.listing}"
@@ -72,16 +74,16 @@ class Bid(models.Model):
                 {self.listing} at {self.bid_time}"
 
 
-class Comment(models.Model):
+class Comment(Model):
 
-    comment = models.TextField(max_length=280)
-    is_hidden = models.BooleanField()
+    comment = TextField(max_length=280)
+    is_hidden = BooleanField(default=False)
 
-    commented = models.DateTimeField(auto_now_add=True)
-    commenter = models.ForeignKey('User', on_delete=models.CASCADE)
+    commented = DateTimeField(auto_now_add=True)
+    commenter = ForeignKey(User, on_delete=CASCADE)
 
-    listing = models.ForeignKey('Listing', on_delete=models.CASCADE)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name="parent_comment")
+    listing = ForeignKey(Listing, on_delete=CASCADE)
+    parent = ForeignKey('self', on_delete=CASCADE, related_name="parent_comment")
 
     def __str__(self):
         return f"Comment {self.id}: {self.commenter} posted on {self.listing}"

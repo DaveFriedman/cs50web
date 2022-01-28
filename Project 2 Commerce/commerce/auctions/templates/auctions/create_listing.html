@@ -1,6 +1,10 @@
 {% extends "auctions/layout.html" %}
 {% load crispy_forms_tags %}
 
+{% block head %}
+
+{% endblock %}
+
 {% block body %}
 <div>
         <h2>Create a Listing</h2>
@@ -11,10 +15,40 @@
 
         {% csrf_token %}
 
-        {{form | crispy}}
+        {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error | escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error | escape }}</strong>
+            </div>
+        {% endfor %}
+        {% endif %}
+
+        
+
+        {{ form | crispy }}
+
+        <script>
+            $(function () {
+              $(".datetimeinput").datetimepicker({
+                  mask: true,
+                //   inline: true,
+                  format: "Y-m-d H:m",
+                  defaultDate:'+1970/01/02',
+                  minDate: "+1970/01/02",
+                  maxDate: "+1970/04/01",
+                });
+            });
+          </script>
 
         <input type="submit" value="Save" class="btn btn-success">
-
+        
     </form>
 </div>
 {% endblock %}

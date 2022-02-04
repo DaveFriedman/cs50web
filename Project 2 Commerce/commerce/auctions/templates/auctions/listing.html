@@ -1,25 +1,38 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Auction #{{listing.id}}: ({{listing.quantity}}) {{listing.name}}</h2>
 
+    <div>
+        <h2>Auction #{{listing.id}}: {{listing.name}}</h2>
+        <ul>
+            <li>ID: {{listing.id}}</li>
+            <li>Name: {{listing.name}}</li>
+            <li>category: {{listing.category}}</li>
+            <li>description: {{listing.description}}</li>
+            <hr>
+            <li>image: <img src={{listing.image_url}} height="300"></li>
+            <hr>
+            <li>Listed by: {{listing.lister}}</li>
+        </ul>
+    </div>
+
+    <div>
+    <h3>Most recent bids</h3>
     <ul>
-        <li>ID: {{listing.id}}</li>
-        <li>Name: {{listing.name}}</li>
-        <li>Quantity: {{listing.quantity}}</li>
-        <li>Is-Returnable: {{listing.is_returnable}}</li>
-        <li>category: {{listing.category}}</li>
-        <li>description: {{listing.description}}</li>
-        <hr>        
-        <li>list price: {{listing.list_price}}</li>
-        <li>buynow price: {{listing.buynow_price}}</li>
-        <li>shipping: {{listing.ship_price}}</li>
-        <hr>        
-        <li>Auction started: {{listing.listing_start}}</li>
-        <li>Auction ends: {{listing.listing_timeout}}</li>
-        <hr>
-        <li>Listed by: {{listing.lister}}</li>
+        {% for bid in bids %}
+        <li>${{bid.bid_price}}, on {{bid.bid_time}}</li>
+        {% endfor %}
     </ul>
+    </div>
 
-    <a href= "{% url 'index' %}">Active Listings</a>
+    <div>
+        <h3>Comments</h3>
+        <ul>
+            {% for comment in comments %}
+            <li>{{comment.commentor}}, at {{comment.commented}}:<br>
+                {{comment.comment}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
 {% endblock %}

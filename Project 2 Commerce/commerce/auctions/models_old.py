@@ -28,12 +28,21 @@ class Listing(Model):
         OTHER =               "OT", _("Other")
 
     name = CharField(max_length=64)
+    # quantity = IntegerField(default=1)
+    # is_returnable = BooleanField()
     category = CharField(choices=categories.choices, max_length=24)
     description = TextField(max_length=480)
     image_url = URLField(blank=True)
-    list_price = DecimalField(max_digits=9, decimal_places=2)
-    
     is_active = BooleanField()
+
+    list_price = DecimalField(max_digits=9, decimal_places=2)
+    # buynow_price = DecimalField(max_digits=9, decimal_places=2, default=None)    
+    # ship_price = DecimalField(max_digits=9, decimal_places=2)
+
+    # listing_start = DateTimeField()
+    # listing_updated = DateTimeField()
+    # listing_end = DateTimeField()
+    # listing_timeout = DateTimeField()
 
     lister = ForeignKey(User, on_delete=CASCADE)
 
@@ -59,6 +68,9 @@ class Bid(Model):
     listing = ForeignKey(Listing, on_delete=CASCADE, related_name="auction")
 
     def __str__(self):
+        return f"Bid {self.id}: {self.bid_price} on {self.listing}"
+        
+    def verbose(self):
         return f"Bid {self.id}: {self.bidder} bid {self.bid_price} on  \
                 {self.listing} at {self.bid_time}"
 
@@ -66,22 +78,18 @@ class Bid(Model):
 class Comment(Model):
 
     comment = TextField(max_length=280)
-    commented = DateTimeField(auto_now_add=True)
+    # is_hidden = BooleanField(default=False)
 
+    commented = DateTimeField(auto_now_add=True)
     commenter = ForeignKey(User, on_delete=CASCADE)
+
     listing = ForeignKey(Listing, on_delete=CASCADE)
+    parent = ForeignKey('self', on_delete=CASCADE, related_name="parent_comment")
 
     def __str__(self):
         return f"Comment {self.id}: {self.commenter} posted on {self.listing}"
 
     def verbose(self):
         return f"Comment {self.id}: At {self.commented}, on {self.listing}, \
-                {self.commenter} wrote: {chr(10)} {self.comment}"
-
-
-class Watchlist(Model):
-    user = ForeignKey(User, on_delete=CASCADE)
-    listing = ForeignKey(Listing, on_delete=CASCADE)
-
-    def __str__(self):
-        return f"PK: {self.id}, User {self.user} watches listing {self.listing}"
+                {self.commenter} replied to {self.parent}, writing: {chr(10)} \
+                {self.comment} {chr(10)} (hidden={self.is_hidden})"

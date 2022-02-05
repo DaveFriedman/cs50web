@@ -17,7 +17,7 @@ CATEGORIES = models.Listing._meta.get_field('category').choices
 def index(request):
     return render(request, "auctions/index.html", {
         "categories": CATEGORIES,
-        "listings": models.Listing.objects.all().order_by("-id")
+        "listings": models.Listing.objects.filter(is_active=True).order_by("-id")
     })
 
 
@@ -64,7 +64,7 @@ def create_listing(request):
                     "id": new_listing.id, 
                     "name": new_listing.name
                 }))
-            
+
             except IntegrityError as e:
                 messages.error(request, f"{e.__cause__}")
                 return render(request, "auctions/create_listing.html", {
@@ -90,9 +90,12 @@ def read_listing(request, id, name):
     listing = models.Listing.objects.get(id=id)
     listing.category = listing.get_category_display()
 
+    owner = False
     watched = False
-    if request.user:
-        user = request.user.id
+    if request.user.is_authenticated:
+        user = request.user
+        if listing.lister == user:
+            owner = True
         if models.Watchlist.objects.filter(user=user, listing=listing).exists():
             watched = True
 
@@ -102,6 +105,7 @@ def read_listing(request, id, name):
     return render(request, "auctions/listing.html", {
         "categories": CATEGORIES,
         "listing": listing,
+        "owner": owner,
         "watched": watched,
         "bids": bids,
         "comments": comments
@@ -116,9 +120,18 @@ def read_category(request, category):
     })
 
 
-# @login_required
-# def close_listing(request):
-#     pass
+@login_required
+def close_listing(request, id, name):
+    listing = models.Listing.objects.get(id=id)
+    try:
+        listing.is_active = False
+        listing.save()
+        messages.success(request, f"You have closed your listing of {listing.name}")
+
+    except IntegrityError as e:
+        messages.error(request, f"{e.__cause__}")
+
+    return HttpResponseRedirect(reverse("index"))
 
 
 def random(request):
@@ -145,6 +158,7 @@ def watch(request, id, name):
             w = models.Watchlist.objects.filter(user=user, listing=listing)
             w.delete()
             messages.success(request, f"Removed from your watchlist")
+
         except IntegrityError as e:
             messages.error(request, f"{e.__cause__}")
 

@@ -10,7 +10,7 @@ urlpatterns = [
     path("<int:id>/<str:name>", views.read_listing,     name="read"),
     path("watchlist",           views.read_watchlist,   name="watchlist"),
     path("<int:id>/<str:name>/watchlist", views.watch,  name="watch"),
-    # path("close",               views.close_listing,    name="close"),
+    path("<int:id>/<str:name>/close",     views.close_listing,    name="close"),
 
     path("random",              views.random,           name="random"),
     path("search",              views.search,           name="search"),

@@ -2,6 +2,12 @@
 
 {% block body %}
 
+    {% if owner %}
+    <div>
+        <a class="btn btn-warning btn-block" href="{% url 'close' listing.id listing.name %}">Close Listing</a>
+    </div>
+    {% endif %}
+
     <div>
         <h2>Auction #{{listing.id}}: {{listing.name}} 
             {% if watched %}

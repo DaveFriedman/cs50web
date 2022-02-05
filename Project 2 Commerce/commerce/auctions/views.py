@@ -90,6 +90,10 @@ def read_listing(request, id, name):
     listing = models.Listing.objects.get(id=id)
     listing.category = listing.get_category_display()
 
+    if listing.is_active == False:
+        messages.error(request, f"Sorry, this listing was closed.")
+        return HttpResponseRedirect(reverse("index"))
+    
     owner = False
     watched = False
     if request.user.is_authenticated:
@@ -113,7 +117,7 @@ def read_listing(request, id, name):
 
 
 def read_category(request, category):
-    listings = models.Listing.objects.filter(category=category).order_by("-id")
+    listings = models.Listing.objects.filter(category=category, is_active=True).order_by("-id")
     return render(request, "auctions/index.html", {
         "categories": CATEGORIES,
         "listings": listings,

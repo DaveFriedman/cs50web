@@ -3,7 +3,13 @@
 {% block body %}
 
     <div>
-        <h2>Auction #{{listing.id}}: {{listing.name}}</h2>
+        <h2>Auction #{{listing.id}}: {{listing.name}} 
+            {% if watched %}
+            <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart-fill"></i></a>
+            {% else %}
+            <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart"></i></a>
+            {% endif %}
+        </h2>
         <ul>
             <li>ID: {{listing.id}}</li>
             <li>Name: {{listing.name}}</li>

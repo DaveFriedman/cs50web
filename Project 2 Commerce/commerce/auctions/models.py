@@ -9,26 +9,27 @@ class User(AbstractUser):
 
 class Listing(Model):
 
-    class categories(TextChoices):
-        """
-        Ebay categories: Electronics, Collectibles & Art, Fashion, Motors, Toys  
-        & Hobbies, Sports, Health & Beauty, Books, Movies & Music, Business & 
-        Industrial, Home & Garden, Others
-        """
-        ELECTRONICS =         "EL", _("Electronics")
-        COLLECTIBLES_ART =    "CO", _("Collectibles & Art")
-        FASHION =             "FA", _("Fashion")
-        MOTORS =              "MO", _("Motors")
-        TOYS_HOBBIES =        "TO", _("Toys & Hobbies")
-        SPORTS =              "SP", _("Sports")
-        HEALTH_BEAUTY =       "HE", _("Health & Beauty")
-        BOOKS_MOVIES_MUSIC =  "BO", _("Books, Movies & Music")
-        BUSINESS_INDUSTRIAL = "BU", _("Business & Industrial")
-        HOME_GARDEN =         "HO", _("Home & Garden")
-        OTHER =               "OT", _("Other")
+    """
+    Ebay categories: Electronics, Collectibles & Art, Fashion, Motors, Toys  
+    & Hobbies, Sports, Health & Beauty, Books, Movies & Music, Business & 
+    Industrial, Home & Garden, Others
+    """
+    CATEGORIES = (
+        ("BO", "Books, Movies & Music"),
+        ("BU", "Business & Industrial"),
+        ("CO", "Collectibles & Art"),
+        ("EL", "Electronics"),
+        ("FA", "Fashion"),
+        ("HE", "Health & Beauty"),
+        ("HO", "Home & Garden"),
+        ("MO", "Motors"),
+        ("SP", "Sports"),
+        ("TO", "Toys & Hobbies"),
+        ("OT", "Other"),
+    )
 
     name = CharField(max_length=64)
-    category = CharField(choices=categories.choices, max_length=24)
+    category = CharField(choices=CATEGORIES, max_length=24)
     description = TextField(max_length=480)
     image_url = URLField(blank=True)
     list_price = DecimalField(max_digits=9, decimal_places=2)
@@ -40,14 +41,10 @@ class Listing(Model):
     def __str__(self):
         return f"Listing {self.id}: {self.lister}'s {self.name}"
 
-    # def verbose(self):
-    #     return f"Listing {self.id}: {self.lister}'s ({self.quantity}) \
-    #             {self.name}, {self.is_returnable=}, {self.category=} {chr(10)} \
-    #             listed on {self.listing_start} for ${self.list_price} + \
-    #             ${self.ship_price}, {chr(10)} \
-    #             times out {self.listing_timeout}, buynow ${self.buynow_price} \
-    #             hit at {self.listing_end} {chr(10)} \
-    #             description: {self.description}"
+    def verbose(self):
+        return f"Listing {self.id}: {self.lister}'s {self.name}, \
+                 for ${self.list_price}, {self.is_active=}, {self.category=}, \
+                 {chr(10)} {self.image_url=}, {chr(10)} {self.description=}"
 
 
 class Bid(Model):

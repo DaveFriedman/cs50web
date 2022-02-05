@@ -16,7 +16,6 @@ class ListingForm(ModelForm):
         model = Listing
         
         fields = ["name", "category", "description", "image_url", "list_price"]
-
         
         labels = {
             "name":         _("Item name"),
@@ -44,19 +43,6 @@ class BidForm(ModelForm):
     class Meta:
         model = Bid
         fields = ["bid_price"]
-
-
-
-class CategoryForm(Form):
-    c = [("a", "-----")] + Listing.categories.choices
-    # c.insert(0, ("", "-----"))
-    #     ELECTRONICS =         "EL", _("Electronics")
-
-    category = ChoiceField(
-        choices = Listing.categories.choices,
-        widget= Select(attrs={'onchange': 'submit();'}
-        ))
-
 
 
 class CommentForm(ModelForm):

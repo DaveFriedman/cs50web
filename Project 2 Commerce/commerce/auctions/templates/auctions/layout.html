@@ -9,9 +9,12 @@
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
         
+        <!-- Bootstrap icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+
         <!-- XDSoft DateTimePicker -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" /> -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script> -->
 
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
     </head>
@@ -34,11 +37,15 @@
                 <a class="nav-link" href="{% url 'create' %}">Create a Listing</a>
             </li>
             <li class="nav-item">
-                <form action="{% url 'category' %}" method="GET">
-                    <!-- {% csrf_token %} -->
-                    {{form | crispy}}
-                </form>
-            </li>
+                <div class="dropdown show">
+                    <a class="btn btn-link dropdown-toggle" href="" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Categories</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        {% for c in categories %}
+                        <a class="dropdown-item" href="{% url 'category' c.0 %}">{{c.1}}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>            
             {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>

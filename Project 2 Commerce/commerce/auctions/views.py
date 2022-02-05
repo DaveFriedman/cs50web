@@ -12,11 +12,12 @@ from . import models, forms
 # from .models import User, Listing, Bid, Comment
 # from .forms import ListingForm, BidForm, CommentForm
 
+CATEGORIES = models.Listing._meta.get_field('category').choices
 
 def index(request):
     return render(request, "auctions/index.html", {
-        "form": forms.CategoryForm(),
-        "listings": models.Listing.objects.all()
+        "categories": CATEGORIES,
+        "listings": models.Listing.objects.all().order_by("-id")
     })
 
 
@@ -53,71 +54,70 @@ def create_listing(request):
                     except IntegrityError as e:
                         messages.error(request, f"{e.__cause__}")
                         return render(request, "auctions/create_listing.html", {
-                            "form": form})          
+                            "categories": CATEGORIES,
+                            "form": form
+                        })          
 
                 messages.success(request, f"Your {new_listing.name} is listed!")
                 return HttpResponseRedirect(reverse("read", kwargs={
+                    "categories": CATEGORIES,
                     "id": new_listing.id, 
                     "name": new_listing.name
-                    }))
+                }))
             
             except IntegrityError as e:
                 messages.error(request, f"{e.__cause__}")
                 return render(request, "auctions/create_listing.html", {
-                    "form": form})
+                    "categories": CATEGORIES,
+                    "form": form
+                })
 
         else:
             # messages.error(request, f"Your submission has errors:") #form.errors
             return render(request, "auctions/create_listing.html", {
+                "categories": CATEGORIES,
                 "form": form
             })
 
     else:
         return render(request, "auctions/create_listing.html", {
-            "form": forms.ListingForm()
+            "categories": CATEGORIES,
+            "form": forms.ListingForm(),
         })
 
 
 def read_listing(request, id, name):
     listing = models.Listing.objects.get(id=id)
     listing.category = listing.get_category_display()
+
+    watched = False
+    if request.user:
+        user = request.user.id
+        if models.Watchlist.objects.filter(user=user, listing=listing).exists():
+            watched = True
+
     bids = models.Bid.objects.filter(listing=id).order_by("-bid_time")
     comments = models.Comment.objects.filter(listing=id).order_by("-commented")
 
     return render(request, "auctions/listing.html", {
+        "categories": CATEGORIES,
         "listing": listing,
+        "watched": watched,
         "bids": bids,
         "comments": comments
     })
 
 
 def read_category(request, category):
-    # if request.method == "POST":
-    if forms.CatagoryForm(request.GET):
-        form = forms.CategoryForm(request.GET)
-        if form.is_valid():
-            category = form.cleaned_data["category"]
-            # if category == '('',)':
-            #     return HttpResponseRedirect(reverse("index"))
-
-            return render(request, "auctions/index.html", {
-                "cat": category,
-                "form": forms.CategoryForm(),
-                "listings": models.Listing.objects.filter(category='category')
-            })
-
-    else:
-        return HttpResponseRedirect(reverse("index"))
+    listings = models.Listing.objects.filter(category=category).order_by("-id")
+    return render(request, "auctions/index.html", {
+        "categories": CATEGORIES,
+        "listings": listings,
+    })
 
 
 # @login_required
-# def update_listing(request):
-#     # https://dev.to/sankalpjonna/save-your-django-models-using-updatefields-for-better-performance-50ig
-#     pass
-
-
-# @login_required
-# def delete_listing(request):
+# def close_listing(request):
 #     pass
 
 
@@ -129,8 +129,41 @@ def search(request):
     pass
 
 
-def watchlist(request):
+def read_watchlist(request):
+    user = models.User.objects.get(pk=request.user.id)
+    watchlist = models.Listing.objects.filter(user=user)
+    listings = models.Listing.object.filter
     pass
+
+
+def watch(request, id, name):
+    user = models.User.objects.get(pk=request.user.id)
+    listing = models.Listing.objects.get(pk=id)
+
+    if models.Watchlist.objects.filter(user=user, listing=listing).exists():
+        try:
+            w = models.Watchlist.objects.filter(user=user, listing=listing)
+            w.delete()
+            messages.success(request, f"Removed from your watchlist")
+        except IntegrityError as e:
+            messages.error(request, f"{e.__cause__}")
+
+    else:
+        try:
+            w = models.Watchlist.objects.create(
+                user = user,
+                listing = listing
+            )
+            w.save()
+            messages.success(request, f"Added to your watchlist")
+
+        except IntegrityError as e:
+                messages.error(request, f"{e.__cause__}")
+
+    return HttpResponseRedirect(reverse("read", kwargs={
+        "id": id,
+        "name": name
+    }))
 
 
 def login_view(request):

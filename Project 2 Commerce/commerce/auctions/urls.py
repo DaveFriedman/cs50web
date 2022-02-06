@@ -12,7 +12,7 @@ urlpatterns = [
 
     path("random",              views.random,           name="random"),
     path("search",              views.search,           name="search"),
-    path("watchlist",           views.watchlist,        name="watchlist"),
+    # path("watchlist",           views.watchlist,        name="watchlist"),
     
     path("login",               views.login_view,       name="login"),
     path("logout",              views.logout_view,      name="logout"),

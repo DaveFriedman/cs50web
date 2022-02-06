@@ -1,58 +1,52 @@
-from django.forms import Form, ModelForm, ChoiceField, Select, ValidationError 
+from django.forms import ModelForm, DateTimeInput
 from django.utils.translation import gettext_lazy as _
 
 from .models import Listing, Bid, Comment
 
 
 class ListingForm(ModelForm):
-
-    def clean_list_price(self):
-        list_price = self.cleaned_data["list_price"]
-        if list_price <= 0:
-            raise ValidationError("Minimum bid must be greater than 0")
-        return list_price
-
+    
     class Meta:
         model = Listing
+        # Are fields lists[] or tuples()? it's confusing:
+        # https://docs.djangoproject.com/en/4.0/topics/forms/modelforms/
         
-        fields = ["name", "category", "description", "image_url", "list_price"]
+        fields = ["name", "quantity", "category", "is_returnable", "list_price", 
+                 "ship_price", "buynow_price", "description", "listing_timeout"]
+
+        widgets = {'listing_timeout': DateTimeInput}
         
         labels = {
-            "name":         _("Item name"),
-            "category":     _("Item category"),
-            "description":  _("Item description"),
-            "image_url":    _("Link to an image of the item (optional)"),
-            "list_price":   _("Minimum bid"),
-        }
+            "name":             _("Item name"),
+            "quantity":         _("Item quantity"),
+            "category":         _("Item category"),
+            "list_price":       _("Minimum bid"),
+            "ship_price":       _("Shipping cost"),
+            "buynow_price":     _("Buy now bid"),
+            "description":      _("Item description"),
+            "listing_timeout":  _("End of auction"),
+            }
 
         help_texts = {
+            "is_returnable":    _("Check if item is returnable"),
+            # "listing_timeout":  _("(in days)"),
         }
 
-        error_messages = {
-        }
+        # error_messages = {
+        #     "quantity":         _("Quantity must be greater than zero"),
+        #     "list_price":       _("Price must be greater than zero"),
+        #     "buynow_price":     _("Price must be greater than zero"),
+        #     "listing_timeout":  _("Auction must be at least 1 day"),
+        # }
 
 
 class BidForm(ModelForm):
-
-    def clean_bid(self):
-        bid = self.cleaned_data["bid"]
-        if bid <= 0:
-            raise ValidationError("Bid must be greater than 0")        
-        return bid
-
     class Meta:
         model = Bid
         fields = ["bid_price"]
 
 
 class CommentForm(ModelForm):
-
-    def clean_comment(self):
-        comment = self.cleaned_data["comment"]
-        if comment == None or comment == "":
-            raise ValidationError("Comment cannot be empty")
-        return comment
-
     class Meta:
         model = Comment
         fields = ["comment"]

@@ -9,10 +9,10 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from . import models, forms
-# from .models import User, Listing, Bid, Comment
-# from .forms import ListingForm, BidForm, CommentForm
+
 
 CATEGORIES = models.Listing._meta.get_field('category').choices
+
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -54,13 +54,13 @@ def create_listing(request):
                     except IntegrityError as e:
                         messages.error(request, f"{e.__cause__}")
                         return render(request, "auctions/create_listing.html", {
-                            "categories": CATEGORIES,
+                            # "categories": CATEGORIES,
                             "form": form
                         })          
 
                 messages.success(request, f"Your {new_listing.name} is listed!")
                 return HttpResponseRedirect(reverse("read", kwargs={
-                    "categories": CATEGORIES,
+                    # "categories": CATEGORIES,
                     "id": new_listing.id, 
                     "name": new_listing.name
                 }))
@@ -68,14 +68,13 @@ def create_listing(request):
             except IntegrityError as e:
                 messages.error(request, f"{e.__cause__}")
                 return render(request, "auctions/create_listing.html", {
-                    "categories": CATEGORIES,
+                    # "categories": CATEGORIES,
                     "form": form
                 })
 
         else:
-            # messages.error(request, f"Your submission has errors:") #form.errors
             return render(request, "auctions/create_listing.html", {
-                "categories": CATEGORIES,
+                # "categories": CATEGORIES,
                 "form": form
             })
 
@@ -147,12 +146,19 @@ def search(request):
 
 
 def read_watchlist(request):
-    user = models.User.objects.get(pk=request.user.id)
-    watchlist = models.Listing.objects.filter(user=user)
-    listings = models.Listing.object.filter
-    pass
+    # user = models.User.objects.get(id=request.user.id)
+    # watchlist = models.Watchlist.objects.filter(user=user)
+    # listings = models.Listing.object.union(watchlist)
+    # listings = models.Listing.objects.all()
+    # listings = watchlist.listings.filter(is_active=True).order_by("-id")
+    # listings = models.Listing.objects.filter(is_active=True).order_by("-id")
+    return render(request, "auctions/watchlist.html", {
+        "categories": CATEGORIES,
+        "listings": models.Listing.objects.filter(is_active=True).order_by("-id")
+    })
 
 
+@login_required
 def watch(request, id, name):
     user = models.User.objects.get(pk=request.user.id)
     listing = models.Listing.objects.get(pk=id)
@@ -201,7 +207,7 @@ def login_view(request):
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "auctions/login.html")
+        return render(request, "auctions/login.html", {"categories": CATEGORIES})
 
 
 def logout_view(request):
@@ -219,6 +225,7 @@ def register(request):
         confirmation = request.POST["confirmation"]
         if password != confirmation:
             return render(request, "auctions/register.html", {
+                "categories": CATEGORIES,
                 "message": "Passwords must match."
             })
 
@@ -228,9 +235,10 @@ def register(request):
             user.save()
         except IntegrityError:
             return render(request, "auctions/register.html", {
+                "categories": CATEGORIES,
                 "message": "Username already taken."
             })
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "auctions/register.html")
+        return render(request, "auctions/register.html", { "categories": CATEGORIES,})

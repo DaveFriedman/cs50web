@@ -32,18 +32,13 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'auctions',
-    'crispy_forms',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
 ]
-
-LOGIN_URL = 'login'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,12 +71,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'commerce.wsgi.application'
 
 
-# Crispy Forms Template
-# https://django-crispy-forms.readthedocs.io/en/latest/index.html
-
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -91,12 +80,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField' 
-
 
 AUTH_USER_MODEL = 'auctions.User'
 

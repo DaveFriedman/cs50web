@@ -1,0 +1,53 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if owner %}
+    <div>
+        <a class="btn btn-warning btn-block" href="{% url 'close' listing.id listing.name %}">Close Listing</a>
+    </div>
+{% endif %}
+
+<div>
+    <h2>Auction #{{listing.id}}: {{listing.name}} 
+        {% if watched %}
+        <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart-fill"></i></a>
+        {% else %}
+        <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart"></i></a>
+        {% endif %}
+    </h2>
+</div>
+
+<div>
+    <ul>
+        <li>ID: {{listing.id}}</li>
+        <li>Name: {{listing.name}}</li>
+        <li>Category: {{listing.category}}</li>
+        <li>Description: {{listing.description}}</li>
+        <hr>
+        <li><img src={{listing.image_url}} height="300"></li>
+        <hr>
+        <li>Listed by: {{listing.lister}}</li>
+    </ul>
+</div>
+
+<div>
+    <h3>Most recent bids</h3>
+    <ul>
+        {% for bid in bids %}
+        <li>${{bid.bid_price}}, on {{bid.bid_time}}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div>
+    <h3>Comments</h3>
+    <ul>
+        {% for comment in comments %}
+        <li>{{comment.commentor}}, at {{comment.commented}}:<br>
+            {{comment.comment}}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

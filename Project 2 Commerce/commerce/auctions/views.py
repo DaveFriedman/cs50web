@@ -30,7 +30,8 @@ def index(request):
 
 def read_category(request, category):
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.filter(is_active=True, category=category).order_by("-id")
+        "listings": Listing.objects.filter(
+            is_active=True, category=category).order_by("-id")
     })
 
 
@@ -133,7 +134,8 @@ def close_listing(request, id, name):
 def read_watchlist(request):
     user = User.objects.get(id=request.user.id)
     watchlist = Watchlist.objects.filter(user=user)
-    listings = Listing.objects.filter(watchlist__in=watchlist, is_active=True).order_by("-id")
+    listings = Listing.objects.filter(
+        watchlist__in=watchlist, is_active=True).order_by("-id")
 
     return render(request, "auctions/index.html", {
         "listings": listings

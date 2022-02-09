@@ -43,7 +43,7 @@ class Listing(Model):
 class Bid(Model):
     bid_price = DecimalField(max_digits=9, decimal_places=2)
     bid_time = DateTimeField(auto_now_add=True)
-    
+
     bidder = ForeignKey(User, on_delete=CASCADE)
     listing = ForeignKey(Listing, on_delete=CASCADE, related_name="auction")
 

@@ -25,8 +25,8 @@ class ListingForm(ModelForm):
 
 
 class BidForm(ModelForm):
-    def clean_bid(self):
-        bid = self.cleaned_data["bid"]
+    def clean_bid_price(self):
+        bid = self.cleaned_data["bid_price"]
         if bid <= 0:
             raise ValidationError("Bid must be greater than 0")
         return bid

@@ -10,15 +10,15 @@ class Listing(Model):
     # Categories via ebay
     CATEGORIES = (
         ("BO", "Books, Movies & Music"),
-        ("BU", "Business & Industrial"),
+        # ("BU", "Business & Industrial"),
         ("CO", "Collectibles & Art"),
-        ("EL", "Electronics"),
+        # ("EL", "Electronics"),
         ("FA", "Fashion"),
-        ("HE", "Health & Beauty"),
-        ("HO", "Home & Garden"),
-        ("MO", "Motors"),
-        ("SP", "Sports"),
-        ("TO", "Toys & Hobbies"),
+        # ("HE", "Health & Beauty"),
+        # ("HO", "Home & Garden"),
+        # ("MO", "Motors"),
+        # ("SP", "Sports"),
+        # ("TO", "Toys & Hobbies"),
         ("OT", "Other"),
     )
 

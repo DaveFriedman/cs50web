@@ -1,19 +1,22 @@
 {% extends "auctions/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block body %}
 
 {% if owner %}
-    <div>
-        <a class="btn btn-warning btn-block" href="{% url 'close' listing.id listing.name %}">Close Listing</a>
-    </div>
+<div>
+    <a class="btn btn-warning btn-block" href="{% url 'close' listing.id listing.name %}">Close Listing</a>
+</div>
 {% endif %}
 
 <div>
-    <h2>Auction #{{listing.id}}: {{listing.name}} 
+    <h2>Auction #{{listing.id}}: {{listing.name}}
+        {% if user.is_authenticated %}
         {% if watched %}
         <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart-fill"></i></a>
         {% else %}
         <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart"></i></a>
+        {% endif %}
         {% endif %}
     </h2>
 </div>
@@ -32,22 +35,40 @@
 </div>
 
 <div>
-    <h3>Most recent bids</h3>
-    <ul>
-        {% for bid in bids %}
-        <li>${{bid.bid_price}}, on {{bid.bid_time}}</li>
-        {% endfor %}
-    </ul>
+    <div>
+        <h3>Most recent bids</h3>
+        <ul>
+            {% for bid in bids %}
+            <li>${{bid.bid_price}}, on {{bid.bid_time}}</li>
+            {% endfor %}
+        </ul>
+        <h5>Add bid</h5>
+        <div class="bid_form">
+            <form action="{% url 'bid' listing.id listing.name %}" method="POST">
+                {% csrf_token %}
+                {{bidform | crispy}}
+                <input type="submit" value="Save" class="btn btn-success">
+            </form>
+        </div>
+    </div>
 </div>
 
 <div>
     <h3>Comments</h3>
     <ul>
         {% for comment in comments %}
-        <li>{{comment.commentor}}, at {{comment.commented}}:<br>
+        <li>{{comment.commenter}}, at {{comment.commented}}:<br>
             {{comment.comment}}</li>
         {% endfor %}
     </ul>
+    <h5>Add comment</h5>
+    <div class="comment_form">
+        <form action="{% url 'comment' listing.id listing.name %}" method="POST">
+            {% csrf_token %}
+            {{commentform | crispy}}
+            <input type="submit" value="Save" class="btn btn-success">
+        </form>
+    </div>
 </div>
 
 {% endblock %}

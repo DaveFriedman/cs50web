@@ -10,15 +10,13 @@ from django.urls import reverse
 
 from .models import *
 from .forms import *
+from .utils import *
 
 """
 TODO
-bids
-comments
 tighten up login redirects
 html/css styling
 message alerts colors
-Create form?
 """
 
 
@@ -33,6 +31,92 @@ def read_category(request, category):
         "listings": Listing.objects.filter(
             is_active=True, category=category).order_by("-id")
     })
+
+@login_required
+def create_bid(request, id, name):
+    if request.method == "POST":
+        form = BidForm(request.POST)
+
+        if form.is_valid():
+            message = is_bid_valid(form, id, request.user.id)
+            if message is not False:
+                messages.error(request, f"{message}")
+                return HttpResponseRedirect(reverse("read", kwargs={
+                    "id": id, 
+                    "name": name,
+                }))
+            else:
+                try:
+                    new_bid = Bid.objects.create(
+                        bid_price = form.cleaned_data["bid_price"],
+                        bid_time = datetime.now(),
+                        bidder = User.objects.get(pk=request.user.id),
+                        listing = Listing.objects.get(pk=id),
+                    )
+                    new_bid.save()
+                    messages.success(request, f"You've bid for {new_bid.listing.name}!")
+                    return HttpResponseRedirect(reverse("read", kwargs={
+                        "id": id, 
+                        "name": name,
+                    }))
+                except IntegrityError as e:
+                        messages.error(request, f"{e.__cause__}")
+                        return HttpResponseRedirect(reverse("read", kwargs={
+                        "id": id, 
+                        "name": name,
+                    }))
+        else:
+            messages.error(request, "Your bid failed to post: Form not valid.")
+            return HttpResponseRedirect(reverse("read", kwargs={
+                "id": id, 
+                "name": name,
+            }))
+    else:
+        messages.error(request, "Your bid failed to post: Method not POST.")
+        return HttpResponseRedirect(reverse("read", kwargs={
+            "id": id, 
+            "name": name,
+        }))
+
+
+@login_required
+def create_comment(request, id, name):
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            try:
+                new_comment = Comment.objects.create(
+                    comment = form.cleaned_data["comment"],
+                    commented = datetime.now(),
+                    commenter = User.objects.get(pk=request.user.id),
+                    listing = Listing.objects.get(pk=id),
+                )
+                new_comment.save()
+                messages.success(request, f"Your comment is posted!")
+                return HttpResponseRedirect(reverse("read", kwargs={
+                    "id": id, 
+                    "name": name,
+                }))
+            except IntegrityError as e:
+                messages.error(request, f"{e.__cause__}")
+                return HttpResponseRedirect(reverse("read", kwargs={
+                "id": id, 
+                "name": name,
+            }))
+        else:
+            messages.error(request, "Your comment failed to post")
+            return HttpResponseRedirect(reverse("read", kwargs={
+                "id": id, 
+                "name": name,
+            }))
+
+    else:
+        messages.error(request, "Your comment failed to post")
+        return HttpResponseRedirect(reverse("read", kwargs={
+            "id": id, 
+            "name": name,
+        }))
 
 
 @login_required
@@ -113,7 +197,9 @@ def read_listing(request, id, name):
         "watched": watched,
         "listing": listing,
         "bids": bids,
-        "comments": comments
+        "comments": comments,
+        "bidform": BidForm(),
+        "commentform": CommentForm(),
     })
 
 
@@ -137,7 +223,7 @@ def read_watchlist(request):
     listings = Listing.objects.filter(
         watchlist__in=watchlist, is_active=True).order_by("-id")
 
-    return render(request, "auctions/index.html", {
+    return render(request, "auctions/watchlist.html", {
         "listings": listings
     })
 

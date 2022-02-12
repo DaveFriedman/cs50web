@@ -28,7 +28,6 @@ def index(request):
 
 
 def read_category(request, category):
-
     return render(request, "auctions/index.html", {
         "header": f"Active listings in {Listing.category_displayname(category)}",
         "listings": Listing.objects.filter(is_active=True, category=category).order_by("-id")
@@ -214,8 +213,8 @@ def close_listing(request, id, name):
     listing = Listing.objects.get(id=id)
     max_bid = Bid.objects.filter(listing=id).aggregate(Max("bid_price"))['bid_price__max']
     winner = Bid.objects.get(listing=id, bid_price=max_bid).bidder
-    if winner == User.objects.get(id=request.user.id):
-        pass
+    # if winner == User.objects.get(id=request.user.id):
+    #     pass
     try:
         listing.is_active = False
         listing.winner = winner
@@ -254,7 +253,7 @@ def read_my_listings(request):
     user = User.objects.get(id=request.user.id)    
     listings = Listing.objects.filter(lister=user).order_by("-id")
     return render(request, "auctions/index.html", {
-        "header": f"{user.username}'s auctions",
+        "header": f"{user.username}'s listings",
         "listings": listings
     })
 

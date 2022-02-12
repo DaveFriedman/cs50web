@@ -1,17 +1,30 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
 <h2>{{header|capfirst}}</h2>
 
 
 {% if listings %}
-<ul>
+<div class="container d-flex flex-wrap align-items-left">
     {% for listing in listings %}
-    <li><a href="{% url 'read' listing.id listing.name %}">
-        Listing {{listing.id}}: {{listing.name}}</a></li>
+    <div class="m-2 card" style="width: 18rem;">
+        {% if listing.image_url %}
+        <img class="card-img-top" src="{{listing.image_url}}" alt="image of {{listing.name}}">
+        {% else %}
+        <img class="card-img-top" src="{% static 'auctions/placeholder600x800.png' %}" alt="no image submitted">
+        {% endif %}
+        <div class="card-body flex-column d-flex">
+            <h5 class="card-title mt-auto">{{listing.name}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{listing.get_category_display}}</h6>
+            <p class="card-text">{{listing.description}}</p>
+            <a href="{% url 'read' listing.id listing.name %}" class="btn
+        btn-primary">See listing</a>
+        </div>
+    </div>
     {% endfor %}
-</ul>
+</div>
 {% else %}
-    <em>There are no listings to show</em>
+<em>There are no listings to show</em>
 {% endif %}
 {% endblock %}

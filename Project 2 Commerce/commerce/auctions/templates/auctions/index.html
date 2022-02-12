@@ -17,7 +17,7 @@
         <div class="card-body flex-column d-flex">
             <h5 class="card-title mt-auto">{{listing.name}}</h5>
             <h6 class="card-subtitle mb-2 text-muted">{{listing.get_category_display}}</h6>
-            <p class="card-text">{{listing.description}}</p>
+            <p class="card-text">{{listing.description | truncatewords:15}}</p>
             <a href="{% url 'read' listing.id listing.name %}" class="btn
         btn-primary">See listing</a>
         </div>

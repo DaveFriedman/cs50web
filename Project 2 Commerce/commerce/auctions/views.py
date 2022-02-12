@@ -184,7 +184,7 @@ def read_listing(request, id, name):
         user = request.user
         if listing.lister == user:
             is_owner = True
-        if listing.winner == True:
+        if listing.winner == user:
             is_winner = True
         if Watchlist.objects.filter(user=user, listing=listing).exists():
             is_watched = True

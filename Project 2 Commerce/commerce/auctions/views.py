@@ -16,7 +16,6 @@ from .utils import *
 TODO
 fix login redirects
 html/css styling
-message alerts colors
 """
 
 

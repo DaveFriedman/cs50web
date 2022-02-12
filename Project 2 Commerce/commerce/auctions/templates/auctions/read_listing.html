@@ -1,9 +1,11 @@
 {% extends "auctions/layout.html" %}
 {% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+
 
 {% block body %}
 
-{% if owner %}
+{% if owner and listing.is_active %}
 <div>
     <a class="btn btn-warning btn-block" href="{% url 'close' listing.id listing.name %}">Close Listing</a>
 </div>
@@ -11,12 +13,12 @@
 
 <div>
     <h2>Auction #{{listing.id}}: {{listing.name}}
-        {% if user.is_authenticated %}
-        {% if watched %}
-        <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart-fill"></i></a>
-        {% else %}
-        <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart"></i></a>
-        {% endif %}
+        {% if user.is_authenticated and not owner %}
+            {% if watched %}
+            <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart-fill"></i></a>
+            {% else %}
+            <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart"></i></a>
+            {% endif %}
         {% endif %}
     </h2>
 </div>
@@ -27,9 +29,11 @@
         <li>Name: {{listing.name}}</li>
         <li>Category: {{listing.category}}</li>
         <li>Description: {{listing.description}}</li>
-        <hr>
-        <li><img src={{listing.image_url}} height="300"></li>
-        <hr>
+        {% if listing.image_url %}
+            <hr>
+            <li><img src={{listing.image_url}} height="300"></li>
+            <hr>
+        {% endif %}
         <li>Listed by: {{listing.lister}}</li>
     </ul>
 </div>
@@ -42,12 +46,11 @@
             <li>${{bid.bid_price}}, on {{bid.bid_time}}</li>
             {% endfor %}
         </ul>
-        <h5>Add bid</h5>
         <div class="bid_form">
             <form action="{% url 'bid' listing.id listing.name %}" method="POST">
                 {% csrf_token %}
                 {{bidform | crispy}}
-                <input type="submit" value="Save" class="btn btn-success">
+                <input type="submit" value="Post bid" class="btn btn-success">
             </form>
         </div>
     </div>
@@ -61,12 +64,11 @@
             {{comment.comment}}</li>
         {% endfor %}
     </ul>
-    <h5>Add comment</h5>
     <div class="comment_form">
         <form action="{% url 'comment' listing.id listing.name %}" method="POST">
             {% csrf_token %}
             {{commentform | crispy}}
-            <input type="submit" value="Save" class="btn btn-success">
+            <input type="submit" value="Post comment" class="btn btn-success">
         </form>
     </div>
 </div>

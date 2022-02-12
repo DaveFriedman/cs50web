@@ -29,7 +29,8 @@ class Listing(Model):
     list_price = DecimalField(max_digits=9, decimal_places=2)
     is_active = BooleanField()
 
-    lister = ForeignKey(User, on_delete=CASCADE)
+    lister = ForeignKey(User, on_delete=CASCADE, related_name="lister")
+    winner = ForeignKey(User, on_delete=CASCADE, blank=True, null=True)
 
     def __str__(self):
         return f"Listing {self.id}: {self.lister}'s {self.name}"
@@ -37,7 +38,16 @@ class Listing(Model):
     def verbose(self):
         return f"Listing {self.id}: {self.lister}'s {self.name}, \
                  for ${self.list_price}, {self.is_active=}, {self.category=}, \
-                 {chr(10)} {self.image_url=}, {chr(10)} {self.description=}"
+                 {chr(10)} {self.image_url=}, {chr(10)} {self.description=}. \
+                 {chr(10)} Won by {self.winner}."
+
+    def category_displayname(code):
+        """
+        Couldn't figure out the django way to get the display name of just 1
+        category, so here we are.        
+        """
+        displayname = dict(Listing._meta.get_field("category").choices)[code]
+        return displayname
 
 
 class Bid(Model):

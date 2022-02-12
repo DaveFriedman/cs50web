@@ -17,7 +17,7 @@
         <h1>Auctions</h1>
         <div>
             {% if user.is_authenticated %}
-                Signed in as <strong>{{ user.username }}</strong>.
+                Signed in as <strong>{{ user.username|capfirst }}</strong>.
             {% else %}
                 Not signed in.
             {% endif %}
@@ -48,6 +48,18 @@
                 <a class="nav-link" href="{% url 'watchlist' %}">My Watchlist</a>
             </li>
             {% if user.is_authenticated %}                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'bids' %}">My Bids</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'comments' %}">My Comments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'listings' %}">My Listings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'winnings' %}">My Winnings</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                 </li>

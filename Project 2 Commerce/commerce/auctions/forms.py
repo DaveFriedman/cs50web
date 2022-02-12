@@ -1,4 +1,4 @@
-from django.forms import ModelForm, ValidationError
+from django.forms import ModelForm, NumberInput, Textarea, ValidationError
 
 from .models import Listing, Bid, Comment
 
@@ -23,6 +23,10 @@ class ListingForm(ModelForm):
             "list_price": "Opening bid",
         }
 
+        widgets = {"description": Textarea(attrs={
+            "rows": 8,
+            })}
+
 
 class BidForm(ModelForm):
     def clean_bid_price(self):
@@ -34,7 +38,11 @@ class BidForm(ModelForm):
     class Meta:
         model = Bid
         fields = ["bid_price"]
-
+        labels = {"bid_price": False}
+        widgets = {"bid_price": NumberInput(attrs={
+            "placeholder": "Add a bid"
+            })}
+         
 
 class CommentForm(ModelForm):
     def clean_comment(self):
@@ -46,3 +54,8 @@ class CommentForm(ModelForm):
     class Meta:
         model = Comment
         fields = ["comment"]
+        labels = {"comment": False}
+        widgets = {"comment": Textarea(attrs={
+            "placeholder": "Add a comment",
+            "rows": 2,
+            })}

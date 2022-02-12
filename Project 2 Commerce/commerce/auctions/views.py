@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -14,7 +14,7 @@ from .utils import *
 
 """
 TODO
-tighten up login redirects
+fix login redirects
 html/css styling
 message alerts colors
 """
@@ -22,15 +22,18 @@ message alerts colors
 
 def index(request):
     return render(request, "auctions/index.html", {
+        "header": "Active Listings",
         "listings": Listing.objects.filter(is_active=True).order_by("-id")
     })
 
 
 def read_category(request, category):
+
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.filter(
-            is_active=True, category=category).order_by("-id")
+        "header": f"Active listings in {Listing.category_displayname(category)}",
+        "listings": Listing.objects.filter(is_active=True, category=category).order_by("-id")
     })
+
 
 @login_required
 def create_bid(request, id, name):
@@ -176,25 +179,28 @@ def read_listing(request, id, name):
     listing = Listing.objects.get(id=id)
     listing.category = listing.get_category_display()
 
-    if listing.is_active == False:
-        messages.error(request, "Sorry, this listing was closed.")
-        return HttpResponseRedirect(reverse("index"))
-
-    owner = False
-    watched = False
+    is_owner = False
+    is_winner = False
+    is_watched = False
     if request.user.is_authenticated:
         user = request.user
         if listing.lister == user:
-            owner = True
+            is_owner = True
+        if listing.winner == True:
+            is_winner = True
         if Watchlist.objects.filter(user=user, listing=listing).exists():
-            watched = True
+            is_watched = True
+
+    if listing.is_active == False and is_owner == False and is_winner == False:
+        messages.error(request, "Sorry, this listing was closed.")
+        return HttpResponseRedirect(reverse("index"))
 
     bids = Bid.objects.filter(listing=id).order_by("-bid_time")
     comments = Comment.objects.filter(listing=id).order_by("-commented")
 
     return render(request, "auctions/read_listing.html", {
-        "owner": owner,
-        "watched": watched,
+        "owner": is_owner,
+        "watched": is_watched,
         "listing": listing,
         "bids": bids,
         "comments": comments,
@@ -206,10 +212,17 @@ def read_listing(request, id, name):
 @login_required
 def close_listing(request, id, name):
     listing = Listing.objects.get(id=id)
+    max_bid = Bid.objects.filter(listing=id).aggregate(Max("bid_price"))['bid_price__max']
+    winner = Bid.objects.get(listing=id, bid_price=max_bid).bidder
+    if winner == User.objects.get(id=request.user.id):
+        pass
     try:
         listing.is_active = False
+        listing.winner = winner
         listing.save()
-        messages.success(request, f"Your listing of {listing.name} is closed.")        
+        messages.success(request, 
+            f"Your listing of {listing.name} is closed. \
+            {winner.username} won your listing!")        
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
 
@@ -217,13 +230,54 @@ def close_listing(request, id, name):
 
 
 @login_required
-def read_watchlist(request):
+def read_my_bids(request):
+    user = User.objects.get(id=request.user.id)
+    bids = Bid.objects.filter(bidder=user).exclude(listing__lister=user)
+    return render(request, "auctions/bids.html",{
+        "header": f"{user.username}'s bids",
+        "bids": bids
+    })
+
+
+@login_required
+def read_my_comments(request):
+    user = User.objects.get(id=request.user.id)
+    comments = Comment.objects.filter(commenter=user)
+    return render(request, "auctions/comments.html",{
+        "header": f"{user.username}'s comments",
+        "comments": comments
+    })
+
+
+@login_required
+def read_my_listings(request):
+    user = User.objects.get(id=request.user.id)    
+    listings = Listing.objects.filter(lister=user).order_by("-id")
+    return render(request, "auctions/index.html", {
+        "header": f"{user.username}'s auctions",
+        "listings": listings
+    })
+
+
+@login_required
+def read_my_watchlist(request):
     user = User.objects.get(id=request.user.id)
     watchlist = Watchlist.objects.filter(user=user)
     listings = Listing.objects.filter(
         watchlist__in=watchlist, is_active=True).order_by("-id")
 
-    return render(request, "auctions/watchlist.html", {
+    return render(request, "auctions/index.html", {
+        "header": f"{user.username}'s watchlist",
+        "listings": listings
+    })
+
+
+@login_required
+def read_my_winnings(request):
+    user = User.objects.get(id=request.user.id)
+    listings = Listing.objects.filter(winner=user).order_by("-id")
+    return render(request, "auctions/index.html", {
+        "header": f"{user.username}'s winnings",
         "listings": listings
     })
 
@@ -252,7 +306,6 @@ def watch(request, id, name):
         "id": id,
         "name": name
     }))
-
 
 
 def login_view(request):

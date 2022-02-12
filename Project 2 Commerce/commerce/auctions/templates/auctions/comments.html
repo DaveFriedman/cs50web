@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2>{{header|capfirst}}</h2>
+
+{% if comments %}
+<ul>
+    {% for comment in comments %}
+    <li><a href="{% url 'read' comment.listing.id comment.listing.name %}">
+        Your comment on {{comment.listing.name}} (ID#{{comment.listing.id}})</a>, at {{comment.commented}}: 
+        <br>{{comment.comment}}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<em>There are no comments to show</em>
+{% endif %}
+{% endblock %}

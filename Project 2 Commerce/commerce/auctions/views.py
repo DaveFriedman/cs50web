@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,6 +5,9 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
+from django.utils.encoding import iri_to_uri
+from django.utils.http import url_has_allowed_host_and_scheme as url_allowed
 
 from .models import *
 from .forms import *
@@ -50,7 +51,7 @@ def create_bid(request, id, name):
                 try:
                     new_bid = Bid.objects.create(
                         bid_price = form.cleaned_data["bid_price"],
-                        bid_time = datetime.now(),
+                        bid_time = timezone.now(),
                         bidder = User.objects.get(pk=request.user.id),
                         listing = Listing.objects.get(pk=id),
                     )
@@ -89,7 +90,7 @@ def create_comment(request, id, name):
             try:
                 new_comment = Comment.objects.create(
                     comment = form.cleaned_data["comment"],
-                    commented = datetime.now(),
+                    commented = timezone.now(),
                     commenter = User.objects.get(pk=request.user.id),
                     listing = Listing.objects.get(pk=id),
                 )
@@ -142,7 +143,7 @@ def create_listing(request):
                     try:
                         bid = Bid.objects.create(
                             bid_price = form.cleaned_data["list_price"],
-                            bid_time = datetime.now(),
+                            bid_time = timezone.now(),
                             bidder = new_listing.lister,
                             listing = new_listing
                         )
@@ -309,7 +310,12 @@ def watch(request, id, name):
 def login_view(request):
     if request.method == "POST":
 
-        # Attempt to sign user in
+        redirect_to = request.POST.get('next', request.GET.get('next', '/'))
+        redirect_to = redirect_to if url_allowed(
+                                    redirect_to, request.get_host()) else '/'
+        # redirect_to = iri_to_uri(redirect_to) if url_allowed(
+        #                             redirect_to, request.get_host()) else '/'
+        
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
@@ -317,7 +323,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(redirect_to)
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."

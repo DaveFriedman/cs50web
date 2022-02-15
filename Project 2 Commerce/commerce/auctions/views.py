@@ -22,7 +22,7 @@ html/css styling
 
 def index(request):
     return render(request, "auctions/index.html", {
-        "header": "Active Listings",
+        "header": "Active listings",
         "listings": Listing.objects.filter(is_active=True).order_by("-id")
     })
 
@@ -112,7 +112,6 @@ def create_comment(request, id, name):
                 "id": id, 
                 "name": name,
             }))
-
     else:
         messages.error(request, "Your comment failed to post")
         return HttpResponseRedirect(reverse("read", kwargs={
@@ -213,8 +212,6 @@ def close_listing(request, id, name):
     listing = Listing.objects.get(id=id)
     max_bid = Bid.objects.filter(listing=id).aggregate(Max("bid_price"))['bid_price__max']
     winner = Bid.objects.get(listing=id, bid_price=max_bid).bidder
-    # if winner == User.objects.get(id=request.user.id):
-    #     pass
     try:
         listing.is_active = False
         listing.winner = winner
@@ -311,8 +308,8 @@ def login_view(request):
     if request.method == "POST":
 
         redirect_to = request.POST.get('next', request.GET.get('next', '/'))
-        redirect_to = redirect_to if url_allowed(
-                                    redirect_to, request.get_host()) else '/'
+        # redirect_to = redirect_to if url_allowed(
+        #                             redirect_to, request.get_host()) else '/'
         # redirect_to = iri_to_uri(redirect_to) if url_allowed(
         #                             redirect_to, request.get_host()) else '/'
         

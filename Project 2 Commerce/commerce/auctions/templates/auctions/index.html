@@ -6,22 +6,30 @@
 
 
 {% if listings %}
-<div class="container d-flex flex-wrap align-items-left">
+<div class="container-fluid d-flex flex-wrap align-items-left">
+    
     {% for listing in listings %}
-    <div class="m-2 card" style="width: 18rem;">
+    <div class="m-3 card" style="width: 18rem;">
+
+        <div class="card-header pb-0">
+            <h3 class="card-title ">{{listing.name}}</h3>
+        </div>
+
         {% if listing.image_url %}
         <img class="card-img-top" src="{{listing.image_url}}" alt="image of {{listing.name}}">
         {% else %}
         <img class="card-img-top" src="{% static 'auctions/placeholder600x800.png' %}" alt="no image submitted">
         {% endif %}
+        
         <div class="card-body flex-column d-flex">
-            <h5 class="card-title mt-auto">{{listing.name}}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{listing.get_category_display}}</h6>
+            <h6 class="card-subtitle mb-2 text-muted mt-auto">{{listing.get_category_display}}</h6>
             <p class="card-text">{{listing.description | truncatewords:15}}</p>
             <a href="{% url 'read' listing.id listing.name %}" class="btn
-        btn-primary">See listing</a>
+        btn-primary stretched-link">See listing</a>
         </div>
+    
     </div>
+
     {% endfor %}
 </div>
 {% else %}

@@ -4,12 +4,15 @@
 <h2>{{header|capfirst}}</h2>
 
 {% if bids %}
-<ul>
+<table class="table table-striped">
     {% for bid in bids %}
-    <li><a href="{% url 'read' bid.listing.id bid.listing.name %}">Your bid on 
-        {{bid.listing.name}} (ID#{{bid.listing.id}})</a>, at {{bid.bid_time}}: <strong>${{bid.bid_price}}</strong></li>
+    <tr>
+        <td><a href="{% url 'read' bid.listing.id bid.listing.name %}">ID#{{bid.listing.id}}: {{bid.listing.name}}</a></td>
+        <td>${{bid.bid_price}}</td>
+        <td>{{bid.bid_time}}</td>
+    </tr>
     {% endfor %}
-</ul>
+</table>
 {% else %}
     <em>There are no bids to show</em>
 {% endif %}

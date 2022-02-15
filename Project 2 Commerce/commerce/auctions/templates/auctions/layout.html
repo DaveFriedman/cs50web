@@ -18,7 +18,7 @@
     <h1>CS50w Auctions</h1>
     
     {% if user.is_authenticated %}
-    <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+    <nav class="navbar navbar-light navbar-auth">
         <ul class="nav">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'bids' %}">My Bids</a>
@@ -76,7 +76,6 @@
     </ul>
     </nav>
 
-    <hr>
     {% if messages %}
     <div class="messages">
         {% for message in messages %}

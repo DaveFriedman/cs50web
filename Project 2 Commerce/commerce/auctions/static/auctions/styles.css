@@ -1,9 +1,14 @@
 body {
   padding: 20px;
+  /* background-color: #dadedf !important; */
 }
 
+.navbar-auth {
+  background-color: rgba(0, 0, 0, 0.05);
+}
 .nav {
   width: 80%;
+  border-bottom: 1px solid #dee2e6;
 }
 .nav-item {
   float: left;
@@ -17,12 +22,12 @@ body {
 } */
 .nav-link:hover,
 .nav-link:focus {
-  font-weight: 700;
+  text-decoration: underline !important;
   /* transform: scale(1.05); */
 }
 
 .card {
-  box-shadow: 2px 2px 10px gray;
+  box-shadow: 2px 2px 10px #6c757d;
   transition: transform 0.3s;
 }
 .card:hover {
@@ -31,7 +36,11 @@ body {
 }
 
 .comment {
-  list-style: none;
+  font-size: 1.25rem;
+}
+.commented {
+  font-style: italic;
+  color: #6c757d;
 }
 
 table td {

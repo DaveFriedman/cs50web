@@ -7,7 +7,7 @@
 <table class="table table-striped">
     {% for bid in bids %}
     <tr>
-        <td><a href="{% url 'read' bid.listing.id bid.listing.name %}">ID#{{bid.listing.id}}: {{bid.listing.name}}</a></td>
+        <td><a href="{% url 'read' bid.listing.id bid.listing.name %}">Item #{{bid.listing.id}}: {{bid.listing.name}}</a></td>
         <td>${{bid.bid_price}}</td>
         <td>{{bid.bid_time}}</td>
     </tr>

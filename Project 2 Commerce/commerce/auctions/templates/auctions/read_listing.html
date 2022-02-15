@@ -14,6 +14,7 @@
             {% endif %}
         {% endif %}
     </h2>
+    <h6 class="text-muted">Category: {{listing.category}}</h6>
     {% if owner and listing.is_active %}
     <a class="btn btn-warning" style="width:50%" href="{% url 'close' listing.id listing.name %}">Close Listing</a>
     {% endif %}
@@ -21,7 +22,6 @@
 
 <div>
     <ul>
-        <li>Category: {{listing.category}}</li>
         {% if listing.image_url %}
         <hr>
         <li><img src={{listing.image_url}} height="300"></li>

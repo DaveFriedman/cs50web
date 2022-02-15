@@ -287,7 +287,7 @@ def watch(request, id, name):
         try:
             w = Watchlist.objects.filter(user=user, listing=listing)
             w.delete()
-            messages.success(request, f"Removed from your watchlist")
+            messages.info(request, f"Removed from your watchlist")
         except IntegrityError as e:
             messages.error(request, f"{e.__cause__}")
     else:

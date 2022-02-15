@@ -56,3 +56,6 @@ table td {
 .commenting table td {
   padding: 0.25rem;
 }
+p {
+  word-wrap: break-word;
+}

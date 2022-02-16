@@ -13,11 +13,6 @@ from .models import *
 from .forms import *
 from .utils import *
 
-"""
-TODO
-fix login redirects
-"""
-
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -39,7 +34,7 @@ def create_bid(request, id, name):
         form = BidForm(request.POST)
 
         if form.is_valid():
-            message = is_bid_valid(form, id, request.user.id)
+            message = is_bid_valid(form, id, request.user) # utils.py
             if message is not False:
                 messages.error(request, f"{message}")
                 return HttpResponseRedirect(reverse("read", kwargs={
@@ -51,7 +46,7 @@ def create_bid(request, id, name):
                     new_bid = Bid.objects.create(
                         bid_price = form.cleaned_data["bid_price"],
                         bid_time = timezone.now(),
-                        bidder = User.objects.get(pk=request.user.id),
+                        bidder = request.user,
                         listing = Listing.objects.get(pk=id),
                     )
                     new_bid.save()
@@ -90,7 +85,7 @@ def create_comment(request, id, name):
                 new_comment = Comment.objects.create(
                     comment = form.cleaned_data["comment"],
                     commented = timezone.now(),
-                    commenter = User.objects.get(pk=request.user.id),
+                    commenter = request.user,
                     listing = Listing.objects.get(pk=id),
                 )
                 new_comment.save()
@@ -133,7 +128,7 @@ def create_listing(request):
                     image_url = form.cleaned_data["image_url"],
                     list_price = form.cleaned_data["list_price"],
                     is_active = True,
-                    lister = User.objects.get(pk=request.user.id)
+                    lister = request.user
                 )
                 new_listing.save()
 
@@ -175,10 +170,10 @@ def create_listing(request):
 def read_listing(request, id, name):
     listing = Listing.objects.get(id=id)
     listing.category = listing.get_category_display()
-
     is_owner = False
     is_winner = False
     is_watched = False
+
     if request.user.is_authenticated:
         user = request.user
         if listing.lister == user:
@@ -226,8 +221,8 @@ def close_listing(request, id, name):
 
 @login_required
 def read_my_bids(request):
-    user = User.objects.get(id=request.user.id)
-    bids = Bid.objects.filter(bidder=user).exclude(listing__lister=user)
+    user = request.user
+    bids = Bid.objects.filter(bidder=user).exclude(listing__lister=user).order_by("-id")
     return render(request, "auctions/bids.html",{
         "header": f"{user.username}'s bids",
         "bids": bids
@@ -236,7 +231,7 @@ def read_my_bids(request):
 
 @login_required
 def read_my_comments(request):
-    user = User.objects.get(id=request.user.id)
+    user = request.user
     comments = Comment.objects.filter(commenter=user)
     return render(request, "auctions/comments.html",{
         "header": f"{user.username}'s comments",
@@ -246,7 +241,7 @@ def read_my_comments(request):
 
 @login_required
 def read_my_listings(request):
-    user = User.objects.get(id=request.user.id)    
+    user = request.user
     listings = Listing.objects.filter(lister=user).order_by("-id")
     return render(request, "auctions/index.html", {
         "header": f"{user.username}'s listings",
@@ -256,11 +251,10 @@ def read_my_listings(request):
 
 @login_required
 def read_my_watchlist(request):
-    user = User.objects.get(id=request.user.id)
+    user = request.user
     watchlist = Watchlist.objects.filter(user=user)
     listings = Listing.objects.filter(
         watchlist__in=watchlist, is_active=True).order_by("-id")
-
     return render(request, "auctions/index.html", {
         "header": f"{user.username}'s watchlist",
         "listings": listings
@@ -269,7 +263,7 @@ def read_my_watchlist(request):
 
 @login_required
 def read_my_winnings(request):
-    user = User.objects.get(id=request.user.id)
+    user = request.user
     listings = Listing.objects.filter(winner=user).order_by("-id")
     return render(request, "auctions/index.html", {
         "header": f"{user.username}'s winnings",
@@ -279,7 +273,7 @@ def read_my_winnings(request):
 
 @login_required
 def watch(request, id, name):
-    user = User.objects.get(pk=request.user.id)
+    user = request.user
     listing = Listing.objects.get(pk=id)
 
     if Watchlist.objects.filter(user=user, listing=listing).exists():
@@ -309,8 +303,8 @@ def login_view(request):
         redirect_to = request.POST.get('next', request.GET.get('next', '/'))
         # redirect_to = redirect_to if url_allowed(
         #                             redirect_to, request.get_host()) else '/'
-        # redirect_to = iri_to_uri(redirect_to) if url_allowed(
-        #                             redirect_to, request.get_host()) else '/'
+        redirect_to = iri_to_uri(redirect_to) if url_allowed(
+                                    redirect_to, request.get_host()) else '/'
         
         username = request.POST["username"]
         password = request.POST["password"]

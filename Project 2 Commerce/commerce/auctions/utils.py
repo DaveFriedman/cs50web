@@ -1,10 +1,10 @@
 from django.db.models import Max
-from .models import Bid, Listing, User
+from .models import Bid, Listing
 
-def is_bid_valid(bid_form, listing_id, user_id):
+def is_bid_valid(bid_form, listing_id, user):
     message = False
     bid = bid_form.cleaned_data["bid_price"]
-    bidder = User.objects.get(id=user_id)
+    bidder = user
     max_bid = Bid.objects.filter(listing=listing_id).aggregate(Max("bid_price"))['bid_price__max']
     max_bidder = Bid.objects.get(listing=listing_id, bid_price=max_bid).bidder
     lister = Listing.objects.get(id=listing_id).lister

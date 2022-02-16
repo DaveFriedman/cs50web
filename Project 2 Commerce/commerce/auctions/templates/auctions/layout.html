@@ -16,70 +16,73 @@
 
 <body>
     <h1>CS50w Auctions</h1>
-    
-    {% if user.is_authenticated %}
-    <nav class="navbar navbar-light navbar-auth">
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'bids' %}">My Bids</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'comments' %}">My Comments</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'listings' %}">My Listings</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'watchlist' %}">My Watchlist</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'winnings' %}">My Winnings</a>
-            </li>
-        </ul>
-    </nav>
-    {% endif %}
-
-    <nav class="navbar navbar-light">
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Categories
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    {% for c in categories %}
-                    <a class="dropdown-item" href="{% url 'category' c.0 %}">{{c.1}}</a>
-                    {% endfor %}
-                </div>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'create' %}">Create</a>
-            </li>
+    <nav class="navbar navbar-expand-md navbar-light navbar-auth">
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbar-list" aria-controls="navbarNav"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse flex-wrap mr-auto" id="navbar-list">
+            <ul class="navbar-nav container-fluid">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Categories
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        {% for c in categories %}
+                        <a class="dropdown-item" href="{% url 'category' c.0 %}">{{c.1}}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create' %}">Create</a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item navbar-text">
+                    Welcome, <strong>{{ user.username|capfirst }}</strong>!
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
             {% if user.is_authenticated %}
-            <li class="nav-item navbar-text">
-                Signed in as <strong>{{ user.username|capfirst }}</strong>.
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">Log In</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'register' %}">Register</a>
-            </li>
+            <hr>
+            <ul class="navbar-nav container-fluid">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'bids' %}">My Bids</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'comments' %}">My Comments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'listings' %}">My Listings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'watchlist' %}">My Watchlist</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'winnings' %}">My Winnings</a>
+                </li>
+            </ul>
             {% endif %}
-    </ul>
+        </div>
     </nav>
 
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
-        <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+        <div class="alert mt-2 mb-0 {{message.tags}} alert-dismissible fade show" role="alert">
             {{message}}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>

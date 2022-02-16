@@ -16,7 +16,6 @@ from .utils import *
 """
 TODO
 fix login redirects
-responsive navbar
 """
 
 

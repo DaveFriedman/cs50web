@@ -1,14 +1,9 @@
+/* layout.html */
 body {
   padding: 20px;
-  /* background-color: #dadedf !important; */
 }
-
-.navbar-auth {
+.navbar-light {
   background-color: rgba(0, 0, 0, 0.05);
-}
-.nav {
-  /* width: 100%; */
-  /* border-bottom: 1px solid #dee2e6 !important; */
 }
 .nav-item {
   width: 20%;
@@ -29,6 +24,7 @@ body {
   text-decoration: underline !important;
 }
 
+/* index.html */
 .card {
   box-shadow: 2px 2px 10px #6c757d;
   transition: transform 0.3s;
@@ -38,19 +34,14 @@ body {
   box-shadow: 2px 2px 10px #007bff;
 }
 
-.comment {
-  font-size: 1.25rem;
+/* read_listing.html, bids.html, comments.html */
+p {
+  word-wrap: break-word;
 }
-.commented {
-  font-style: italic;
-  color: #6c757d;
-}
-
 table td {
   padding: 0.75rem;
   vertical-align: middle;
 }
-
 .listing,
 .bidding,
 .commenting {
@@ -63,6 +54,10 @@ table td {
 .commenting table td {
   padding: 0.25rem;
 }
-p {
-  word-wrap: break-word;
+.comment {
+  font-size: 1.25rem;
+}
+.commented {
+  font-style: italic;
+  color: #6c757d;
 }

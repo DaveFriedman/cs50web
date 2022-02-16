@@ -1,22 +1,22 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>{{header|capfirst}}</h2>
+<h2>{{header | capfirst}}</h2>
 
 {% if comments %}
-<table class="table table-striped">
-    {% for comment in comments %}
-    <tr>
-        <td>             
-            <a href="{% url 'read' comment.listing.id comment.listing.name %}">
-            Item #{{comment.listing.id}}: {{comment.listing.name}}</a>
-            <span class="commented">{{comment.commented}}</span><br>
-            <span class="comment">{{comment.comment}}</span>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+    <table class="table table-striped">
+        {% for comment in comments %}
+        <tr>
+            <td>             
+                <a href="{% url 'read' comment.listing.id comment.listing.name %}">
+                    Item #{{comment.listing.id}}: {{comment.listing.name}}</a>
+                <span class="commented">{{comment.commented}}</span><br>
+                <span class="comment">{{comment.comment}}</span>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 {% else %}
-<em>There are no comments to show</em>
+    <em>There are no comments to show</em>
 {% endif %}
 {% endblock %}

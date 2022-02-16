@@ -24,94 +24,9 @@ def index(request):
 def read_category(request, category):
     return render(request, "auctions/index.html", {
         "header": f"Active listings in {Listing.category_displayname(category)}",
-        "listings": Listing.objects.filter(is_active=True, category=category).order_by("-id")
+        "listings": Listing.objects.filter(
+            is_active=True, category=category).order_by("-id")
     })
-
-
-@login_required
-def create_bid(request, id, name):
-    if request.method == "POST":
-        form = BidForm(request.POST)
-
-        if form.is_valid():
-            message = is_bid_valid(form, id, request.user) # utils.py
-            if message is not False:
-                messages.error(request, f"{message}")
-                return HttpResponseRedirect(reverse("read", kwargs={
-                    "id": id, 
-                    "name": name,
-                }))
-            else:
-                try:
-                    new_bid = Bid.objects.create(
-                        bid_price = form.cleaned_data["bid_price"],
-                        bid_time = timezone.now(),
-                        bidder = request.user,
-                        listing = Listing.objects.get(pk=id),
-                    )
-                    new_bid.save()
-                    messages.success(request, f"You've bid for {new_bid.listing.name}!")
-                    return HttpResponseRedirect(reverse("read", kwargs={
-                        "id": id, 
-                        "name": name,
-                    }))
-                except IntegrityError as e:
-                        messages.error(request, f"{e.__cause__}")
-                        return HttpResponseRedirect(reverse("read", kwargs={
-                        "id": id, 
-                        "name": name,
-                    }))
-        else:
-            messages.error(request, "Your bid failed to post: Form not valid.")
-            return HttpResponseRedirect(reverse("read", kwargs={
-                "id": id, 
-                "name": name,
-            }))
-    else:
-        messages.error(request, "Your bid failed to post: Method not POST.")
-        return HttpResponseRedirect(reverse("read", kwargs={
-            "id": id, 
-            "name": name,
-        }))
-
-
-@login_required
-def create_comment(request, id, name):
-    if request.method == "POST":
-        form = CommentForm(request.POST)
-
-        if form.is_valid():
-            try:
-                new_comment = Comment.objects.create(
-                    comment = form.cleaned_data["comment"],
-                    commented = timezone.now(),
-                    commenter = request.user,
-                    listing = Listing.objects.get(pk=id),
-                )
-                new_comment.save()
-                messages.success(request, f"Your comment is posted!")
-                return HttpResponseRedirect(reverse("read", kwargs={
-                    "id": id, 
-                    "name": name,
-                }))
-            except IntegrityError as e:
-                messages.error(request, f"{e.__cause__}")
-                return HttpResponseRedirect(reverse("read", kwargs={
-                "id": id, 
-                "name": name,
-            }))
-        else:
-            messages.error(request, "Your comment failed to post")
-            return HttpResponseRedirect(reverse("read", kwargs={
-                "id": id, 
-                "name": name,
-            }))
-    else:
-        messages.error(request, "Your comment failed to post")
-        return HttpResponseRedirect(reverse("read", kwargs={
-            "id": id, 
-            "name": name,
-        }))
 
 
 @login_required
@@ -187,8 +102,8 @@ def read_listing(request, id, name):
         messages.error(request, "Sorry, this listing was closed.")
         return HttpResponseRedirect(reverse("index"))
 
-    bids = Bid.objects.filter(listing=id).order_by("-bid_time")
-    comments = Comment.objects.filter(listing=id).order_by("-commented")
+    bids = Bid.objects.filter(listing=id).order_by("-id")
+    comments = Comment.objects.filter(listing=id).order_by("-id")
 
     return render(request, "auctions/read_listing.html", {
         "owner": is_owner,
@@ -204,7 +119,8 @@ def read_listing(request, id, name):
 @login_required
 def close_listing(request, id, name):
     listing = Listing.objects.get(id=id)
-    max_bid = Bid.objects.filter(listing=id).aggregate(Max("bid_price"))['bid_price__max']
+    max_bid = Bid.objects.filter(
+        listing=id).aggregate(Max("bid_price"))['bid_price__max']
     winner = Bid.objects.get(listing=id, bid_price=max_bid).bidder
     try:
         listing.is_active = False
@@ -220,9 +136,124 @@ def close_listing(request, id, name):
 
 
 @login_required
+def create_bid(request, id, name):
+    if request.method == "POST":
+        form = BidForm(request.POST)
+
+        if form.is_valid():
+            message = is_bid_valid(form, id, request.user) # utils.py
+            if message is not False:
+                messages.error(request, f"{message}")
+                return HttpResponseRedirect(reverse("read", kwargs={
+                    "id": id, 
+                    "name": name,
+                }))
+            else:
+                try:
+                    new_bid = Bid.objects.create(
+                        bid_price = form.cleaned_data["bid_price"],
+                        bid_time = timezone.now(),
+                        bidder = request.user,
+                        listing = Listing.objects.get(pk=id),
+                    )
+                    new_bid.save()
+                    messages.success(
+                        request, f"You've bid for {new_bid.listing.name}!")
+                    return HttpResponseRedirect(reverse("read", kwargs={
+                        "id": id, 
+                        "name": name,
+                    }))
+                except IntegrityError as e:
+                        messages.error(request, f"{e.__cause__}")
+                        return HttpResponseRedirect(reverse("read", kwargs={
+                        "id": id, 
+                        "name": name,
+                    }))
+        else:
+            messages.error(request, "Your bid failed to post: Form not valid.")
+            return HttpResponseRedirect(reverse("read", kwargs={
+                "id": id, 
+                "name": name,
+            }))
+    else:
+        messages.error(request, "Your bid failed to post: Method not POST.")
+        return HttpResponseRedirect(reverse("read", kwargs={
+            "id": id, 
+            "name": name,
+        }))
+
+
+@login_required
+def create_comment(request, id, name):
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            try:
+                new_comment = Comment.objects.create(
+                    comment = form.cleaned_data["comment"],
+                    commented = timezone.now(),
+                    commenter = request.user,
+                    listing = Listing.objects.get(pk=id),
+                )
+                new_comment.save()
+                messages.success(request, f"Your comment is posted!")
+                return HttpResponseRedirect(reverse("read", kwargs={
+                    "id": id, 
+                    "name": name,
+                }))
+            except IntegrityError as e:
+                messages.error(request, f"{e.__cause__}")
+                return HttpResponseRedirect(reverse("read", kwargs={
+                "id": id, 
+                "name": name,
+            }))
+        else:
+            messages.error(request, "Your comment failed to post")
+            return HttpResponseRedirect(reverse("read", kwargs={
+                "id": id, 
+                "name": name,
+            }))
+    else:
+        messages.error(request, "Your comment failed to post")
+        return HttpResponseRedirect(reverse("read", kwargs={
+            "id": id, 
+            "name": name,
+        }))
+
+
+@login_required
+def create_watch(request, id, name):
+    user = request.user
+    listing = Listing.objects.get(pk=id)
+
+    if Watchlist.objects.filter(user=user, listing=listing).exists():
+        try:
+            w = Watchlist.objects.filter(user=user, listing=listing)
+            w.delete()
+            messages.info(request, f"Removed from your watchlist")
+        except IntegrityError as e:
+            messages.error(request, f"{e.__cause__}")
+    else:
+        try:
+            w = Watchlist.objects.create(user=user, listing=listing)
+            w.save()
+            messages.success(request, f"Added to your watchlist")
+        except IntegrityError as e:
+                messages.error(request, f"{e.__cause__}")
+
+    return HttpResponseRedirect(reverse("read", kwargs={
+        "id": id,
+        "name": name
+    }))
+
+
+@login_required
 def read_my_bids(request):
     user = request.user
-    bids = Bid.objects.filter(bidder=user).exclude(listing__lister=user).order_by("-id")
+    # Get all your bids, except for your listings' initial list_price bids
+    bids = Bid.objects.filter(
+        bidder=user).exclude(listing__lister=user).order_by("-id")
     return render(request, "auctions/bids.html",{
         "header": f"{user.username}'s bids",
         "bids": bids
@@ -232,7 +263,7 @@ def read_my_bids(request):
 @login_required
 def read_my_comments(request):
     user = request.user
-    comments = Comment.objects.filter(commenter=user)
+    comments = Comment.objects.filter(commenter=user).order_by("-id")
     return render(request, "auctions/comments.html",{
         "header": f"{user.username}'s comments",
         "comments": comments
@@ -271,38 +302,9 @@ def read_my_winnings(request):
     })
 
 
-@login_required
-def watch(request, id, name):
-    user = request.user
-    listing = Listing.objects.get(pk=id)
-
-    if Watchlist.objects.filter(user=user, listing=listing).exists():
-        try:
-            w = Watchlist.objects.filter(user=user, listing=listing)
-            w.delete()
-            messages.info(request, f"Removed from your watchlist")
-        except IntegrityError as e:
-            messages.error(request, f"{e.__cause__}")
-    else:
-        try:
-            w = Watchlist.objects.create(user=user, listing=listing)
-            w.save()
-            messages.success(request, f"Added to your watchlist")
-        except IntegrityError as e:
-                messages.error(request, f"{e.__cause__}")
-
-    return HttpResponseRedirect(reverse("read", kwargs={
-        "id": id,
-        "name": name
-    }))
-
-
 def login_view(request):
     if request.method == "POST":
-
         redirect_to = request.POST.get('next', request.GET.get('next', '/'))
-        # redirect_to = redirect_to if url_allowed(
-        #                             redirect_to, request.get_host()) else '/'
         redirect_to = iri_to_uri(redirect_to) if url_allowed(
                                     redirect_to, request.get_host()) else '/'
         

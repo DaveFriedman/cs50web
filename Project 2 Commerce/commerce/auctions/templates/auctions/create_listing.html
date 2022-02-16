@@ -11,11 +11,9 @@
     <form action="{% url 'create' %}" method="POST">
 
         {% csrf_token %}
-
         {{form | crispy}}
 
         <input type="submit" value="Save" class="btn btn-success">
-
     </form>
 </div>
 {% endblock %}

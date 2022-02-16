@@ -3,34 +3,34 @@
 {% load crispy_forms_field %}
 
 {% block body %}
-<div class="read_listing">
+
 <div class="listing col-lg-5 col-md-6 col-sm-12">
     <h2>Auction #{{listing.id}}: {{listing.name}}
         {% if user.is_authenticated and not owner %}
             {% if watched %}
-            <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart-fill"></i></a>
+                <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart-fill"></i></a>
             {% else %}
-            <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart"></i></a>
+                <a href="{% url 'watch' listing.id listing.name %}"><i class="bi bi-heart"></i></a>
             {% endif %}
         {% endif %}
     </h2>
     
     {% if owner and listing.is_active %}
-        <a class="btn btn-warning" style="width:50%" 
-        href="{% url 'close' listing.id listing.name %}">Close Listing</a>
+        <a class="btn btn-warning" style="width:50%" href="{% url 'close' listing.id listing.name %}">Close Listing</a>
     {% elif not listing.is_active %}
         <h3 class="text-success">Winner: {{listing.winner}}</h4>
     {% endif %}
 
     <h6 class="text-muted">Category: {{listing.category}}
-        <br>Listed by: {{listing.lister|capfirst}}
+        <br>Listed by: {{listing.lister | capfirst}}
     </h6>        
 
     {% if listing.image_url %}
-    <hr>
-    <img src={{listing.image_url}} width="350">
-    <hr>
+        <hr>
+        <img src={{listing.image_url}} width="350">
+        <hr>
     {% endif %}
+
     <h6>Description</h6>
     <p>{{listing.description}}</p>
 </div>
@@ -40,29 +40,33 @@
 
     <div class="bid_form">
         <form action="{% url 'bid' listing.id listing.name %}" method="POST">
+
             {% csrf_token %}
             {{bidform | crispy}}
-            <input type="submit" value="Post bid" class="btn btn-success btn-block mb-2"
-            {% if not listing.is_active %} disabled {% endif %}>
+
+            <input type="submit" class="btn btn-success btn-block mb-2"
+            {% if not listing.is_active%}
+                disabled
+            {% elif not user.is_authenticated%}
+                disabled value="Log in to bid"
+            {% else %}
+                value="Post bid"
+            {% endif %}>
         </form>
     </div>
-
     
     {% if bids %}
-    <table class="table table-striped mb-1">
-
-        {% for bid in bids %}
-        <tr>
-            <td>${{bid.bid_price}}</td>
-            <td>{{bid.bid_time}}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
+        <table class="table table-striped mb-1">
+            {% for bid in bids %}
+            <tr>
+                <td>${{bid.bid_price}}</td>
+                <td>{{bid.bid_time}}</td>
+            </tr>
+            {% endfor %}
+        </table>
     {% else %}
-    <p class="mt-2 mb-0"><em>There are no bids to show</em></p>
+        <p class="mt-2 mb-0"><em>There are no bids to show</em></p>
     {% endif %}
-
 </div>
 
 <div class="commenting col-lg-3 col-md-5 col-sm-12">
@@ -70,29 +74,36 @@
     
     <div class="comment_form">
         <form action="{% url 'comment' listing.id listing.name %}" method="POST">
+            
             {% csrf_token %}
             {{commentform | crispy}}
-            <input type="submit" value="Post comment" class="btn btn-success btn-block"
-            {% if not listing.is_active %} disabled {% endif %}>
+
+            <input type="submit" class="btn btn-success btn-block"
+            {% if not listing.is_active%}
+                disabled
+            {% elif not user.is_authenticated%}
+                disabled value="Log in to comment"
+            {% else %}
+                value="Post comment"
+            {% endif %}>
         </form>
     </div>
     
     {% if comments %}
-    <table class="table table-striped mt-2 mb-1">
-        {% for comment in comments %}
-        <tr>
-            <td>             
-            {{comment.commenter|capfirst}} 
-            <span class="commented">{{comment.commented}}:</span><br>
-            <span class="comment">{{comment.comment}}</span>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-
+        <table class="table table-striped mt-2 mb-1">
+            {% for comment in comments %}
+            <tr>
+                <td>             
+                {{comment.commenter | capfirst}} 
+                <span class="commented">{{comment.commented}}:</span><br>
+                <span class="comment">{{comment.comment}}</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
     {% else %}
-    <p class="mt-2 mb-0"><em>There are no comments to show</em></p>
+        <p class="mt-2 mb-0"><em>There are no comments to show</em></p>
     {% endif %}
 </div>
-</div>
+
 {% endblock %}

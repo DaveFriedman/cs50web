@@ -24,7 +24,7 @@ class ListingForm(ModelForm):
         }
 
         widgets = {"description": Textarea(attrs={
-            "rows": 8,
+            "rows": 6,
             })}
 
 

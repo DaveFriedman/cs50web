@@ -10,23 +10,7 @@
     <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
     <hr>
-    
-    
-        
 
-    <div id="emails-view">
-        <div class="row">                
-            <div class="address col-3 text-left">test1@test1.com</div>
-            <div class="subject col-6 text-left">test subject
-                <span class="body text-truncate font-weight-light">1234 2234 3234 4234 52345</span></div>
-            <div class="timestamp col-3 text-right">Jan 1 2022 12:00am</div>
-        </div>
-        <!-- <ul id="emails" name="emails">
-
-            
-        
-        </ul> -->
-    </div>
 
     <div id="compose-view">
         <h3>New Email</h3>
@@ -44,6 +28,15 @@
             <input type="submit" class="btn btn-primary"/>
         </form>
     </div>
+
+
+    <div id="email-view">        
+    </div>
+
+    <table class="table table-hover"> <!-- emails view -->
+        <tbody id="emails-view">
+        </tbody>
+    </table>
 {% endblock %}
 
 {% block script %}

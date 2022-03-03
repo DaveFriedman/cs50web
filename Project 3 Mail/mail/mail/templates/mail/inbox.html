@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body %}
-    <h2>{{ request.user.email }}</h2>
+    <h2>Welcome, {{ request.user.email }}</h2>
 
     <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
     <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
@@ -13,7 +13,7 @@
 
 
     <div id="compose-view">
-        <h3>New Email</h3>
+        <h3 id="compose-header">New Email</h3>
         <form id="compose-form" name="compose-form">
             <div class="form-group">
                 From: <input disabled class="form-control" value="{{ request.user.email }}">
@@ -25,17 +25,17 @@
                 <input class="form-control" id="compose-subject" name="compose-subject" placeholder="Subject">
             </div>
             <textarea class="form-control" id="compose-body" name="compose-body" placeholder="Body"></textarea>
-            <input type="submit" class="btn btn-primary"/>
+            <input type="submit" class="btn btn-primary mt-1"/>
         </form>
     </div>
 
 
-    <div id="email-view">        
+    <div id="email-view">
     </div>
 
 
-    <table class="table table-hover"> <!-- emails view -->
-        <tbody id="emails-view">
+    <table class="table table-hover text-nowrap"> <!-- mailbox view -->
+        <tbody id="mailbox-view">
         </tbody>
     </table>
 {% endblock %}

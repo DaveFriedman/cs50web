@@ -65,8 +65,16 @@ function load_mailbox(mailbox) {
       email_summary = show_email_summary(email, mailbox);
       mailbox_view.append(email_summary);
     });
+    // Or show empty message
+    if (json.length === 0) {
+      let message = document.createElement('p');
+      message.innerText = `${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)} is empty`;
+      message.className = "message font-weight-light font-italic";
+      mailbox_view.append(message);
+    }
   })
   .catch((error) => console.log("load_mailbox() error:", error));
+
 }
 
 
@@ -89,13 +97,13 @@ function show_email_summary(email, mailbox) {
   email_summary.append(address);
 
   let subject = document.createElement('td');
-  subject.textContent = (email.subject.length <= 20) ? email.subject : email.subject.slice(0, 20).concat("...");
+  subject.textContent = email.subject; //(email.subject.length <= 20) ? email.subject : email.subject.slice(0, 20).concat("...");
   subject.className = (email.read === false) ? "subject font-weight-bold" : "subject";
   email_summary.append(subject);
 
   let body = document.createElement('td');
   body.className = "body font-weight-light";
-  body.textContent = (email.body.length <= 20) ? email.body : email.body.slice(0, 20).concat("...");
+  body.textContent = (email.body.length <= 20) ? email.body : email.body.slice(0, 20).concat(" ...");
   email_summary.append(body);
 
   let timestamp = document.createElement('td');

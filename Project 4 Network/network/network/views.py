@@ -7,6 +7,13 @@ from django.urls import reverse
 from .models import User
 
 
+# TODO
+# Do a full django user auth flow with PW change and email confirmation
+# Explore whether React is useful for this project
+# Start with New Post model, then form - React vs CrispyForms?
+# Are posts a linked list? Probably not but maybe?
+
+
 def index(request):
     return render(request, "network/index.html")
 

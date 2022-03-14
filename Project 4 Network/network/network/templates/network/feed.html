@@ -1,0 +1,14 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    Feed
+    <ul>
+        {% if posts %}
+        {% for p in posts %}
+        <li>{{p}}</li>
+        {% endfor %}
+        {% else %}
+        <li>There are no posts</li>
+        {% endif %}
+    </ul>
+{% endblock %}

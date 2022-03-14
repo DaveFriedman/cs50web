@@ -1,0 +1,17 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    Account Profile
+    <ul>
+        <li>{{user.username}}</li>
+        <li>Has {{follower_count}} followers</li>
+        <li>Follows {{following_count}} creators</li>
+        {% if posts %}
+        {% for p in posts %}
+        <li>{{p}}</li>
+        {% endfor %}
+        {% else %}
+        <li>{{user.username}} has no posts</li>
+        {% endif %}
+    </ul>
+{% endblock %}

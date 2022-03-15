@@ -1,0 +1,17 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<div>
+    <h2>What's on your mind?</h2>
+</div>
+
+<div class="post_form">
+    <form action="{% url 'edit_post' postid %}" method="POST">
+        {% csrf_token %}
+        {{form}}
+        <br>
+        <input type="submit" value="Post" class="btn btn-success">
+    </form>
+</div>
+{% endblock %}

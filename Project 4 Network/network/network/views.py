@@ -18,7 +18,7 @@ from .forms import PostForm
 def index(request):
     posts = Post.objects.all().order_by("-id")
     return render(request, "network/feed.html", {
-        "posts" : posts
+        "posts": posts
     })
 
 
@@ -28,7 +28,7 @@ def following(request):
     creators = Follow.objects.filter(follower=user).values('creator')
     posts = Post.objects.filter(author__in=creators).order_by("-id")
     return render(request, "network/feed.html", {
-        "posts" : posts
+        "posts": posts
     })
 
 
@@ -51,7 +51,7 @@ def create_post(request):
             return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/create_post.html", {
-            "form" : PostForm()
+            "form":  PostForm()
         })
 
 
@@ -65,8 +65,8 @@ def edit_post(request, postid):
             try:
                 post.body = form.cleaned_data["body"]
                 post.edited = timezone.now()
-                post.save()
-                messages.success(request, "You've posted!")
+                post.save(update_fields=['body', 'edited'])
+                messages.success(request, "Your post is updated!")
             except IntegrityError as e:
                 messages.error(request, f"{e.__cause__}")
             return HttpResponseRedirect(reverse("index"))
@@ -75,22 +75,31 @@ def edit_post(request, postid):
             return HttpResponseRedirect(reverse("index"))
     else:
         post = Post.objects.get(id=postid)
-        return render(request, "network/create_post.html", {
-            "form" : PostForm(initial={
-                "body" : post.body
+        return render(request, "network/edit_post.html", {
+            "postid": postid,
+            "form": PostForm(initial={
+                "body": post.body
             })
         })
+
+
+@login_required
+def read_post(request, postid):
+    post = Post.objects.get(id=postid)
+    return render(request, "network/feed.html", {
+        "posts": [post]
+    })
 
 
 @login_required
 def account_settings(request):
     userinfo = {
         "username": request.user.username,
-        "first" : request.user.first_name,
-        "last" : request.user.last_name,
-        "email" : request.user.email,
-        "last_login" : request.user.last_login,
-        "date_joined" : request.user.date_joined
+        "first": request.user.first_name,
+        "last": request.user.last_name,
+        "email": request.user.email,
+        "last_login": request.user.last_login,
+        "date_joined": request.user.date_joined
     }
     # userinfo = request.user
     return render(request, "network/account_settings.html", {
@@ -102,10 +111,10 @@ def account_settings(request):
 def account_profile(request, userid, username):
     user = User.objects.get(id = userid)
     return render(request, "network/account_profile.html", {
-        "user" : user,
-        "follower_count" : Follow.objects.filter(creator=user).count(),
-        "following_count" : Follow.objects.filter(follower=user).count(),
-        "posts" : Post.objects.filter(author=user).order_by("-id")
+        "user": user,
+        "follower_count": Follow.objects.filter(creator=user).count(),
+        "following_count": Follow.objects.filter(follower=user).count(),
+        "posts": Post.objects.filter(author=user).order_by("-id")
     })
 
 

@@ -9,11 +9,20 @@ class User(AbstractUser):
 class Post(Model):
     author = ForeignKey(User, on_delete=CASCADE)
     body = TextField(max_length=280)
-    timestamp = DateTimeField(auto_now_add=True)
+    posted = DateTimeField(auto_now_add=True)
+    edited = DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Post {self.id}: by {self.author} at {self.timestamp}"
+        return f"Post {self.id}: by {self.author} at {self.posted}"
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "author": self.author,
+            "body": self.body,
+            "posted": self.posted,
+            "edited": self.edited
+        }
 
 class Like(Model):
     post = ForeignKey(Post, on_delete=CASCADE)

@@ -7,4 +7,4 @@ class PostForm(ModelForm):
         model = Post
         fields = ["body"]
         labels = {"body" : "What's on your mind?"}
-        widgets = {"body" : Textarea(attrs={"rows": 6})}
+        widgets = {"body" : Textarea(attrs={"rows": 4})}

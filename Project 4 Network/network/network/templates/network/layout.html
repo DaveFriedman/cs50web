@@ -26,10 +26,13 @@
             </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Following</a>
+                    <a class="nav-link" href="{% url 'following' %}">Following</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'profile' user.id user.username %}"> My Profile</a>
+                    <a class="nav-link" href="{% url 'create_post' %}">New Post</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' user.id user.username %}">My Profile</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'settings' %}">My Settings</a>

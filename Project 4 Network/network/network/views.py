@@ -11,42 +11,75 @@ from .models import User, Post, Like, Follow
 from .forms import PostForm
 
 # TODO
-# Create create_post.html
-# Create some dummy data
-# create post editor
 # Fill out User attributes? (profile pic, email uniqueness, about me)
-# Add last-edit timestamp to Post?
 # pagination
 
 
 def index(request):
-    return render(request, "network/index.html")
-
-
-def feed(request):
+    posts = Post.objects.all().order_by("-id")
     return render(request, "network/feed.html", {
-        "posts" : Post.objects.all().order_by("-id")
+        "posts" : posts
+    })
+
+
+@login_required
+def following(request):
+    user = request.user
+    creators = Follow.objects.filter(follower=user).values('creator')
+    posts = Post.objects.filter(author__in=creators).order_by("-id")
+    return render(request, "network/feed.html", {
+        "posts" : posts
     })
 
 
 @login_required
 def create_post(request):
     if request.method == "POST":
-        form= PostForm(request.POST)
+        form = PostForm(request.POST)
 
         if form.is_valid():
             try:
                 new_post = Post.objects.create(
                     body = form.cleaned_data["body"],
                     author = request.user,
-                    timestamp = timezone.now()
+                    posted = timezone.now(),
+                    edited = timezone.now()
                 )
                 new_post.save()
             except IntegrityError as e:
                 messages.error(request, f"{e.__cause__}")
-                return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("index"))
     else:
-        return HttpResponseRedirect(reverse("index"))
+        return render(request, "network/create_post.html", {
+            "form" : PostForm()
+        })
+
+
+@login_required
+def edit_post(request, postid):
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        post = Post.objects.get(id=postid)
+
+        if form.is_valid() and post.author==request.user:
+            try:
+                post.body = form.cleaned_data["body"]
+                post.edited = timezone.now()
+                post.save()
+                messages.success(request, "You've posted!")
+            except IntegrityError as e:
+                messages.error(request, f"{e.__cause__}")
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            messages.error(request, f"Invalid submission")
+            return HttpResponseRedirect(reverse("index"))
+    else:
+        post = Post.objects.get(id=postid)
+        return render(request, "network/create_post.html", {
+            "form" : PostForm(initial={
+                "body" : post.body
+            })
+        })
 
 
 @login_required

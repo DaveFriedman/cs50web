@@ -13,6 +13,10 @@ from .forms import PostForm
 # TODO
 # Fill out User attributes? (profile pic, email uniqueness, about me)
 # pagination
+# follows
+# likes: many-to-many relationship?
+# time to start design
+# time to start javascript async & serialization
 
 
 def index(request):
@@ -116,7 +120,6 @@ def account_profile(request, userid, username):
         "following_count": Follow.objects.filter(follower=user).count(),
         "posts": Post.objects.filter(author=user).order_by("-id")
     })
-
 
 
 def login_view(request):

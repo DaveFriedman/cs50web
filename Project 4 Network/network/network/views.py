@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -12,17 +13,19 @@ from .forms import PostForm
 
 # TODO
 # Fill out User attributes? (profile pic, email uniqueness, about me)
-# pagination
 # follows
 # likes: many-to-many relationship?
-# time to start design
 # time to start javascript async & serialization
 
 
 def index(request):
     posts = Post.objects.all().order_by("-id")
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request, "network/feed.html", {
-        "posts": posts
+        "form":  PostForm(),
+        "posts": page_obj
     })
 
 
@@ -31,8 +34,12 @@ def following(request):
     user = request.user
     creators = Follow.objects.filter(follower=user).values('creator')
     posts = Post.objects.filter(author__in=creators).order_by("-id")
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request, "network/feed.html", {
-        "posts": posts
+        "form":  PostForm(),
+        "posts": page_obj
     })
 
 

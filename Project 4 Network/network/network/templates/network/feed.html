@@ -1,15 +1,90 @@
 {% extends "network/layout.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
 
 {% block body %}
-    Feed
-    <ul>
-        {% if posts %}
-        {% for p in posts %}
-        <li><p>{{p.body}}<br>
-        <a href="{% url 'profile' p.author.id p.author.username %}">{{p.author}}</a>, <a href="{% url 'read_post' p.id %}">{{p.posted}}</a></p></li>
-        {% endfor %}
+
+<div class="container">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-8 p-2">
+            <div class="bg-white border mt-2">
+                <div class="align-items-center p-3">
+                    <form action="{% url 'create_post' %}" method="POST">
+                        <h2>What's on your mind?</h2>
+                        {% csrf_token %}
+                        {{form | crispy}}
+                        <input type="submit" value="Post" class="btn btn-success">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if posts %}
+{% for post in posts %}
+
+<div class="container">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-8 p-2">
+            <div class="bg-white border mt-2">
+                <div class="d-flex flex-row justify-content-between align-items-center p-2 border-bottom">
+                    <div class="d-flex flex-row align-items-center p-2y">
+                        <a href="{% url 'profile' post.author.id post.author.username %}"><img class="rounded-circle" src="{% static 'network/default_user.png' %}" width="45"></a>
+                        <div class="d-flex flex-column flex-wrap ml-2">
+                            <span class="font-weight-bold"><a href="{% url 'profile' post.author.id post.author.username %}">{{post.author | capfirst}}</a></span>
+                            <span class="text-black-50 time">
+                                <!-- <a href="{% url 'read_post' post.id %}">{{post.posted}}</a> -->
+                                {{post.posted}}
+                                {% if user == post.author %}
+                                <a href="{% url 'edit_post' post.id %}">Edit</a>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2 ml-2">
+                    <span>{{post.body}}</span>
+                </div>
+                <div class="d-flex justify-content-between m-2 p-2">
+                    <!-- <i class="fa fa-thumbs-up"></i> -->
+                    Liked by: Ann, Bob, Cal, Don...
+                    <!-- {#% if user in %#} -->
+                    <img class="likes" src="{% static 'network/heartblue.png' %}" width="22">
+                    <!-- <img class="likes" src="{% static 'network/heartgreen.png' %}" width="22"> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+<nav aria-label="Page navigation">
+    <ul class="pagination pagination justify-content-center p-2 mt-4">
+
+        {% if posts.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{posts.previous_page_number}}">Previous</a></li>
         {% else %}
-        <li>There are no posts</li>
+        <li class="page-item disabled"><a class="page-link" href="?page=1">&laquo; First</a></li>
+        <li class="page-item disabled"><a class="page-link" href="?page=1">Previous</a></li>
+        {% endif %}
+
+        <li class="page-item active"><a class="page-link" href="?page={{posts.number}}">{{posts.number}} of {{posts.paginator.num_pages}}</a></li>
+
+        {% if posts.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last &raquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Next</a></li>
+        <li class="page-item disabled"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last &raquo;</a></li>
         {% endif %}
     </ul>
+</nav>
+
+
+{% else %}
+<p>There are no posts</p>
+{% endif %}
 {% endblock %}

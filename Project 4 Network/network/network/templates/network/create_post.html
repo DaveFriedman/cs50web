@@ -1,17 +1,26 @@
 {% extends "network/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block body %}
 
-<div>
-    <h2>What's on your mind?</h2>
-</div>
-
-<div class="post_form">
-    <form action="{% url 'create_post' %}" method="POST">
-        {% csrf_token %}
-        {{form}}
-        <br>
-        <input type="submit" value="Post" class="btn btn-success">
-    </form>
+<div class="container">
+    <div class="d-flex justify-content-center row">
+        <div class="bg-white border mt-2">
+        <div class="post_form">
+            <h2>What's on your mind?</h2>
+            <div class="col-md-8 p-2">
+                <div class="d-flex flex-row justify-content-between align-items-center p-2 border-bottom">
+                    <div class="d-flex flex-row align-items-center p-2y">
+                            <form action="{% url 'create_post' %}" method="POST">
+                                {% csrf_token %}
+                                {{form | crispy}}
+                                <input type="submit" value="Post" class="btn btn-success">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

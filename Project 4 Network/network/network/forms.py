@@ -6,5 +6,8 @@ class PostForm(ModelForm):
     class Meta:
         model = Post
         fields = ["body"]
-        labels = {"body" : "What's on your mind?"}
-        widgets = {"body" : Textarea(attrs={"rows": 4})}
+        labels = {"body" : ""}
+        widgets = {"body" : Textarea(attrs={
+            "rows": 6,
+            "placeholder": "Write here!"
+        })}

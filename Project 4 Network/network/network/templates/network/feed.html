@@ -37,7 +37,7 @@
                                 <!-- <a href="{% url 'read_post' post.id %}">{{post.posted}}</a> -->
                                 {{post.posted}}
                                 {% if user == post.author %}
-                                <a href="{% url 'edit_post' post.id %}">Edit</a>
+                                    <a href="{% url 'edit_post' post.id %}">Edit</a>
                                 {% endif %}
                             </span>
                         </div>
@@ -64,27 +64,26 @@
     <ul class="pagination pagination justify-content-center p-2 mt-4">
 
         {% if posts.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
-        <li class="page-item"><a class="page-link" href="?page={{posts.previous_page_number}}">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{posts.previous_page_number}}">Previous</a></li>
         {% else %}
-        <li class="page-item disabled"><a class="page-link" href="?page=1">&laquo; First</a></li>
-        <li class="page-item disabled"><a class="page-link" href="?page=1">Previous</a></li>
+            <li class="page-item disabled"><a class="page-link" href="?page=1">&laquo; First</a></li>
+            <li class="page-item disabled"><a class="page-link" href="?page=1">Previous</a></li>
         {% endif %}
 
         <li class="page-item active"><a class="page-link" href="?page={{posts.number}}">{{posts.number}} of {{posts.paginator.num_pages}}</a></li>
 
         {% if posts.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">Next</a></li>
-        <li class="page-item"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last &raquo;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last &raquo;</a></li>
         {% else %}
-        <li class="page-item disabled"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Next</a></li>
-        <li class="page-item disabled"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last &raquo;</a></li>
+            <li class="page-item disabled"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Next</a></li>
+            <li class="page-item disabled"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last &raquo;</a></li>
         {% endif %}
     </ul>
 </nav>
 
-
 {% else %}
-<p>There are no posts</p>
+    <p>There are no posts</p>
 {% endif %}
 {% endblock %}

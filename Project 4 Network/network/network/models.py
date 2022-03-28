@@ -32,6 +32,14 @@ class Like(Model):
     def __str__(self):
         return f"{self.id}: at {self.timestamp}, {self.liker} liked {self.post}"
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "post": self.post,
+            "liker": self.liker,
+            "timestamp": self.timestamp
+        }
+
 
 class Follow(Model):
     creator = ForeignKey(User, on_delete=CASCADE, related_name="creator")

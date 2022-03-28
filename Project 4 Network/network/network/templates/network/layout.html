@@ -19,8 +19,8 @@
         <div>
             <ul class="navbar-nav mr-auto">
             {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Welcome, <strong>{{user.username}}</strong></a>
+                <li class="nav-item navbar-text">
+                    Hi <strong>{{user.username | capfirst}}!</strong>
                 </li>
             {% endif %}
             <li class="nav-item">
@@ -28,11 +28,11 @@
             </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'following' %}">Following</a>
+                    <a class="nav-link" href="{% url 'following' %}">My Follows</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="{% url 'create_post' %}">New Post</a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'profile' user.id user.username %}">My Profile</a>
                 </li>

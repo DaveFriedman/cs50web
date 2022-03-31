@@ -47,7 +47,7 @@ def following(request):
 
 
 # @login_required
-# def create_post(request):
+# def create_post(request): # not async
 #     if request.method == "POST":
 #         form = PostForm(request.POST)
 
@@ -70,11 +70,11 @@ def following(request):
 
 
 @login_required
-def create_post(request): #_async
+def create_post(request): # async
     if request.method == "POST":
         post_body = request.POST.get('post')
-        print("body:", post_body)
-        [print(p) for p in post_body]
+        # print("body:", post_body)
+        # [print(p) for p in post_body]
         if post_body is None:
             return JsonResponse({"error": "Post cannot be empty."}, status=400)
 
@@ -146,13 +146,20 @@ def account_settings(request):
 
 
 @login_required
-def account_profile(request, userid, username):
-    user = User.objects.get(id = userid)
-    return render(request, "network/account_profile.html", {
-        "user": user,
-        "follower_count": Follow.objects.filter(creator=user).count(),
-        "following_count": Follow.objects.filter(follower=user).count(),
-        "posts": Post.objects.filter(author=user).order_by("-id")
+def profile(request, profileid, profilename):
+    profile = User.objects.get(id = profileid)
+    posts = Post.objects.filter(author=profile).order_by("-id")
+
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "network/profile.html", {
+        "profile": profile,
+        "follower_count": Follow.objects.filter(creator=profile).count(),
+        "following_count": Follow.objects.filter(follower=profile).count(),
+        "user_follows_profile": True if Follow.objects.filter(
+            follower=request.user, creator=profile).exists() else False,
+        "posts": page_obj
     })
 
 

@@ -1,12 +1,15 @@
+import json
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+
 
 from .models import User, Post, Like, Follow
 from .forms import PostForm
@@ -43,27 +46,51 @@ def following(request):
     })
 
 
-@login_required
-def create_post(request):
-    if request.method == "POST":
-        form = PostForm(request.POST)
+# @login_required
+# def create_post(request):
+#     if request.method == "POST":
+#         form = PostForm(request.POST)
 
-        if form.is_valid():
-            try:
-                new_post = Post.objects.create(
-                    body = form.cleaned_data["body"],
+#         if form.is_valid():
+#             try:
+#                 new_post = Post.objects.create(
+#                     body = form.cleaned_data["body"],
+#                     author = request.user,
+#                     posted = timezone.now(),
+#                     edited = timezone.now()
+#                 )
+#                 new_post.save()
+#             except IntegrityError as e:
+#                 messages.error(request, f"{e.__cause__}")
+#             return HttpResponseRedirect(reverse("index"))
+#     else:
+#         return render(request, "network/create_post.html", {
+#             "form":  PostForm()
+#         })
+
+
+@login_required
+def create_post(request): #_async
+    if request.method == "POST":
+        post_body = request.POST.get('post')
+        print("body:", post_body)
+        [print(p) for p in post_body]
+        if post_body is None:
+            return JsonResponse({"error": "Post cannot be empty."}, status=400)
+
+        try:
+            new_post = Post.objects.create(
+                    body = post_body,
                     author = request.user,
                     posted = timezone.now(),
                     edited = timezone.now()
                 )
-                new_post.save()
-            except IntegrityError as e:
-                messages.error(request, f"{e.__cause__}")
-            return HttpResponseRedirect(reverse("index"))
+            new_post.save()
+            return JsonResponse({"message": "Post successful."}, status=201)
+        except IntegrityError as e:
+            return JsonResponse({"error": f"{e.__cause__}"}, status=400)
     else:
-        return render(request, "network/create_post.html", {
-            "form":  PostForm()
-        })
+        return JsonResponse({"error": "POST request required."}, status=400)
 
 
 @login_required

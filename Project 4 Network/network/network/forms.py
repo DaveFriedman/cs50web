@@ -9,5 +9,5 @@ class PostForm(ModelForm):
         labels = {"body" : ""}
         widgets = {"body" : Textarea(attrs={
             "rows": 6,
-            "placeholder": "Write here!"
+            "placeholder": "What's on your mind?",
         })}

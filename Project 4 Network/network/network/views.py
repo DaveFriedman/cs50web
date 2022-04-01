@@ -15,9 +15,7 @@ from .models import User, Post, Like, Follow
 from .forms import PostForm
 
 # TODO
-# Fill out User attributes? (profile pic, email uniqueness, about me)
-# follows
-# likes: many-to-many relationship?
+# Update User model: User attributes? (profile pic, email uniqueness, bio)
 # time to start javascript async & serialization
 
 

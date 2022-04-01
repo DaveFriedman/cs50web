@@ -3,8 +3,9 @@ from django.db.models import *
 
 
 class User(AbstractUser):
+    # profile_pic_url = URLField(blank=True)
+    # bio = TextField(max_length=280)
     pass
-
 
 class Post(Model):
     author = ForeignKey(User, on_delete=CASCADE)

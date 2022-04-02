@@ -12,10 +12,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from .models import User, Post, Like, Follow
-from .forms import PostForm
+from .forms import UserForm, PostForm
 
 # TODO
 # Update User model: User attributes? (profile pic, email uniqueness, bio)
+# migrate User model
+# Update-password page
+# messages
 # time to start javascript async & serialization
 
 
@@ -129,17 +132,37 @@ def read_post(request, postid):
 
 @login_required
 def account_settings(request):
-    userinfo = {
-        "username": request.user.username,
-        "first": request.user.first_name,
-        "last": request.user.last_name,
-        "email": request.user.email,
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        auser = User.objects.get(id=request.user.id)
+
+        if form.is_valid():
+            try:
+                auser.username = form.cleaned_data["username"]
+                auser.first_name = form.cleaned_data["first_name"]
+                auser.last_name= form.cleaned_data["last_name"]
+                auser.email = form.cleaned_data["email"]
+                # user.bio = form.cleaned_data["bio"]
+                # user.profile_pic_url = form.cleaned_data["profile_pic_url"]
+                auser.save()
+                messages.success(request, "Your account settings are updated!")
+            except IntegrityError as e:
+                messages.error(request, f"error: {e.__cause__}")
+            # return HttpResponseRedirect(reverse("index"))
+        else:
+            messages.error(request, f"Something went wrong.")
+            # return HttpResponseRedirect(reverse("index"))
+    return render(request, "network/account_settings.html", {
+        "form": UserForm(initial={
+            "username": request.user.username,
+            "first_name": request.user.first_name,
+            "last_name": request.user.last_name,
+            "email": request.user.email,
+            # "bio": request.user.bio,
+            # "profile_pic_url": request.user.profile_pic_url
+            }),
         "last_login": request.user.last_login,
         "date_joined": request.user.date_joined
-    }
-    # userinfo = request.user
-    return render(request, "network/account_settings.html", {
-        "userinfo": userinfo
         })
 
 

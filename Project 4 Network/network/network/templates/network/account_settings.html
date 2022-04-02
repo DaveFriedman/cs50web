@@ -1,11 +1,26 @@
 {% extends "network/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block body %}
-    Account Settings
-    <ul>
-        {% for k, v in userinfo.items %}
-        <li>{{k}}: {{v}}</li>
-        {% endfor %}
-        <li>{{userinfo}}</li>
-    </ul>
+
+<div class="container">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-8 p-2">
+            <h2>Hi <strong>{{user.username | capfirst}}</strong></h2>
+            <div class="text-black-50 mb-2">Change your account settings here.</div>
+            {% if messages %}
+            <div>{{messages}}</div>
+            {% endif %}
+            <form action="{% url 'settings' %}" method="post">
+                {% csrf_token %}
+                {{form | crispy}}
+                <input type="submit" value="Update" class="btn btn-success">
+            </form>
+
+            <div class="text-black-50 mt-4 mb-0 pb-0">Your last sign-in was on {{user.last_login | date:"F j, Y"}}.</div>
+            <div class="text-black-50 mb-0 pb-0">You joined on {{user.date_joined | date:"F j, Y"}}.</div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

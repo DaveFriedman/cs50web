@@ -1,7 +1,8 @@
 import json
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
@@ -18,7 +19,6 @@ from .forms import UserForm, PostForm
 # Update User model: User attributes? (profile pic, email uniqueness, bio)
 # migrate User model
 # Update-password page
-# messages
 # time to start javascript async & serialization
 
 
@@ -131,42 +131,6 @@ def read_post(request, postid):
 
 
 @login_required
-def account_settings(request):
-    if request.method == "POST":
-        form = UserForm(request.POST)
-        auser = User.objects.get(id=request.user.id)
-
-        if form.is_valid():
-            try:
-                auser.username = form.cleaned_data["username"]
-                auser.first_name = form.cleaned_data["first_name"]
-                auser.last_name= form.cleaned_data["last_name"]
-                auser.email = form.cleaned_data["email"]
-                # user.bio = form.cleaned_data["bio"]
-                # user.profile_pic_url = form.cleaned_data["profile_pic_url"]
-                auser.save()
-                messages.success(request, "Your account settings are updated!")
-            except IntegrityError as e:
-                messages.error(request, f"error: {e.__cause__}")
-            # return HttpResponseRedirect(reverse("index"))
-        else:
-            messages.error(request, f"Something went wrong.")
-            # return HttpResponseRedirect(reverse("index"))
-    return render(request, "network/account_settings.html", {
-        "form": UserForm(initial={
-            "username": request.user.username,
-            "first_name": request.user.first_name,
-            "last_name": request.user.last_name,
-            "email": request.user.email,
-            # "bio": request.user.bio,
-            # "profile_pic_url": request.user.profile_pic_url
-            }),
-        "last_login": request.user.last_login,
-        "date_joined": request.user.date_joined
-        })
-
-
-@login_required
 def profile(request, profileid, profilename):
     profile = User.objects.get(id = profileid)
     posts = Post.objects.filter(author=profile).order_by("-id")
@@ -182,6 +146,45 @@ def profile(request, profileid, profilename):
             follower=request.user, creator=profile).exists() else False,
         "posts": page_obj
     })
+
+
+@login_required
+def account_settings(request):
+    context = {"username": request.user.username,
+            "first_name": request.user.first_name,
+            "last_name": request.user.last_name,
+            "email": request.user.email,
+            # "bio": request.user.bio,
+            # "profile_pic_url": request.user.profile_pic_url
+            }
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        auser = User.objects.get(id=request.user.id)
+        if form.is_valid():
+            try:
+                auser.username = form.cleaned_data["username"]
+                auser.first_name = form.cleaned_data["first_name"]
+                auser.last_name= form.cleaned_data["last_name"]
+                auser.email = form.cleaned_data["email"]
+                # user.bio = form.cleaned_data["bio"]
+                # user.profile_pic_url = form.cleaned_data["profile_pic_url"]
+                auser.save()
+                messages.success(request, "Your account settings are updated!")
+            except IntegrityError as e:
+                messages.error(request, f"error: {e.__cause__}")
+            return render(request, "network/account_settings.html", {
+                "form": UserForm(initial=context),
+                "last_login": request.user.last_login,
+                "date_joined": request.user.date_joined
+                })
+        else:
+            messages.error(request, f"Form invalid.")
+
+    return render(request, "network/account_settings.html", {
+        "form": UserForm(initial=context),
+        "last_login": request.user.last_login,
+        "date_joined": request.user.date_joined
+        })
 
 
 def login_view(request):

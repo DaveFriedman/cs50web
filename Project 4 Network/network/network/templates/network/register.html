@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block body %}
 
@@ -8,25 +9,22 @@
             <h2>Register</h2>
 
             {% if messages %}
-            <div>{{messages}}</div>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {% endfor %}
+            </div>
             {% endif %}
 
-            <form action="{% url 'register' %}" method="post">
+            <form action="{% url 'register' %}" method="POST">
                 {% csrf_token %}
-                <div class="form-group my-2">
-                    <input class="form-control" autofocus type="text" name="username" placeholder="Username">
-                </div>
-                <div class="form-groupmy-2">
-                    <input class="form-control" type="email" name="email" placeholder="Email Address">
-                </div>
-                <div class="form-group my-2">
-                    <input class="form-control" type="password" name="password" placeholder="Password">
-                </div>
-                <div class="form-group my-2">
-                    <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
-                </div>
-                <input class="btn btn-primary" type="submit" value="Register">
+                {{form | crispy}}
+                <input type="submit" value="Save" class="btn btn-success">
             </form>
+
             Already have an account? <a href="{% url 'login' %}">Log In here.</a>
         </div>
     </div>

@@ -1,12 +1,26 @@
-from django.forms import ModelForm, Textarea
+from django.contrib.auth.forms import UserCreationForm
+from django.forms import CharField, EmailInput, ModelForm, Textarea
 
 from .models import User, Post
+
+class SignUpForm(UserCreationForm):
+    email = CharField(max_length=254, required=False, widget=EmailInput())
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
 
 class UserForm(ModelForm):
     class Meta:
         model = User
-        fields = ["username", "first_name", "last_name", "email", "bio", "profile_pic_url",]
+        fields = [
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "bio",
+            "profile_pic_url",
+            ]
         widgets = {"bio": Textarea(attrs={
             "rows": 6
             })}

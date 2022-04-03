@@ -6,14 +6,14 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 
 from .models import User, Post, Like, Follow
-from .forms import UserForm, PostForm
+from .forms import  PostForm, SignUpForm, UserForm
 
 # TODO
 # Update User model: User attributes? (profile pic, email uniqueness, bio)
@@ -154,7 +154,7 @@ def account_settings(request):
     form = UserForm(instance=request.user)
 
     if request.method == "POST":
-        form = UserForm(request.POST, instance=request.user)
+        form = UserForm(data=request.POST, instance=request.user)
 
         if form.is_valid():
             try:
@@ -169,13 +169,37 @@ def account_settings(request):
                 "date_joined": request.user.date_joined
                 })
         else:
-            messages.error(request, f"Form invalid.")
+            messages.error(request, f"Please correct the error below.s")
 
     return render(request, "network/account_settings.html", {
         "form": form,
         "last_login": request.user.last_login,
         "date_joined": request.user.date_joined
         })
+
+
+@login_required
+def change_account_password(request):
+    form = PasswordChangeForm(request.user)
+
+    if request.method == 'POST':
+        form = PasswordChangeForm(data=request.POST, instance=request.user)
+
+        if form.is_valid():
+            try:
+                user = form.save(commit=False)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, ('Your password was updated!'))
+            except IntegrityError as e:
+                messages.error(request, f"error: {e.__cause__}")
+            return redirect('password')
+        else:
+            messages.error(request, ('Please correct the error below.'))
+
+    return render(request, 'network/change_account_password.html', {
+        'form': form
+    })
 
 
 def login_view(request):
@@ -191,9 +215,8 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "network/login.html", {
-                "message": "Invalid username and/or password."
-            })
+            messages.error(request, ("Invalid username and/or password."))
+            return render(request, "network/login.html")
     else:
         return render(request, "network/login.html")
 
@@ -204,27 +227,19 @@ def logout_view(request):
 
 
 def register(request):
+    form = SignUpForm()
+
     if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            try:
+                user = form.save()
+                user.save()
+                login(request, user)
+                return HttpResponseRedirect(reverse("index"))
+            except IntegrityError as e:
+                messages.error(request, f"error: {e.__cause__}")
 
-        # Ensure password matches confirmation
-        password = request.POST["password"]
-        confirmation = request.POST["confirmation"]
-        if password != confirmation:
-            return render(request, "network/register.html", {
-                "message": "Passwords must match."
-            })
-
-        # Attempt to create new user
-        try:
-            user = User.objects.create_user(username, email, password)
-            user.save()
-        except IntegrityError:
-            return render(request, "network/register.html", {
-                "message": "Username already taken."
-            })
-        login(request, user)
-        return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request, "network/register.html")
+    return render(request, "network/register.html", {
+        'form': form
+    })

@@ -32,7 +32,7 @@ class Like(Model):
     timestamp = DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"id#{self.id}: at {self.timestamp}, {self.liker} liked {self.post}"
+        return f"#{self.id}: {self.liker} liked {self.post} ({self.timestamp})"
 
     def serialize(self):
         return {
@@ -49,4 +49,4 @@ class Follow(Model):
     timestamp = DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"id#{self.id}: {self.follower} follows {self.creator}"
+        return f"#{self.id}: {self.follower} follows {self.creator}"

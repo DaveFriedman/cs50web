@@ -11,7 +11,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
-
 from .models import User, Post, Like, Follow
 from .forms import  PostForm, SignUpForm, UserForm
 

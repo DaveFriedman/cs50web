@@ -3,6 +3,7 @@ from django.forms import CharField, EmailInput, ModelForm, Textarea
 
 from .models import User, Post
 
+
 class SignUpForm(UserCreationForm):
     email = CharField(max_length=254, required=False, widget=EmailInput())
     class Meta:

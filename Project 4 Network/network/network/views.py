@@ -49,6 +49,7 @@ def following(request):
 
 # @login_required
 # def create_post(request): # not async
+#     form = PostForm()
 #     if request.method == "POST":
 #         form = PostForm(request.POST)
 
@@ -61,12 +62,13 @@ def following(request):
 #                     edited = timezone.now()
 #                 )
 #                 new_post.save()
+#                 messages.success(request, "Your post is up!")
 #             except IntegrityError as e:
 #                 messages.error(request, f"{e.__cause__}")
 #             return HttpResponseRedirect(reverse("index"))
 #     else:
 #         return render(request, "network/create_post.html", {
-#             "form":  PostForm()
+#             "form": form
 #         })
 
 
@@ -96,9 +98,11 @@ def create_post(request): # async
 
 @login_required
 def edit_post(request, postid):
+    post = Post.objects.get(id=postid)
+    form = PostForm(initial={"body": post.body})
+
     if request.method == "POST":
         form = PostForm(request.POST)
-        post = Post.objects.get(id=postid)
 
         if form.is_valid() and post.author==request.user:
             try:
@@ -113,12 +117,9 @@ def edit_post(request, postid):
             messages.error(request, f"Invalid submission")
             return HttpResponseRedirect(reverse("index"))
     else:
-        post = Post.objects.get(id=postid)
         return render(request, "network/edit_post.html", {
             "postid": postid,
-            "form": PostForm(initial={
-                "body": post.body
-            })
+            "form": form
         })
 
 
@@ -150,30 +151,20 @@ def profile(request, profileid, profilename):
 
 @login_required
 def account_settings(request):
-    context = {"username": request.user.username,
-            "first_name": request.user.first_name,
-            "last_name": request.user.last_name,
-            "email": request.user.email,
-            # "bio": request.user.bio,
-            # "profile_pic_url": request.user.profile_pic_url
-            }
+    form = UserForm(instance=request.user)
+
     if request.method == "POST":
-        form = UserForm(request.POST)
-        auser = User.objects.get(id=request.user.id)
+        form = UserForm(request.POST, instance=request.user)
+
         if form.is_valid():
             try:
-                auser.username = form.cleaned_data["username"]
-                auser.first_name = form.cleaned_data["first_name"]
-                auser.last_name= form.cleaned_data["last_name"]
-                auser.email = form.cleaned_data["email"]
-                # user.bio = form.cleaned_data["bio"]
-                # user.profile_pic_url = form.cleaned_data["profile_pic_url"]
-                auser.save()
+                user = form.save(commit=False)
+                user.save()
                 messages.success(request, "Your account settings are updated!")
             except IntegrityError as e:
                 messages.error(request, f"error: {e.__cause__}")
             return render(request, "network/account_settings.html", {
-                "form": UserForm(initial=context),
+                "form": form,
                 "last_login": request.user.last_login,
                 "date_joined": request.user.date_joined
                 })
@@ -181,7 +172,7 @@ def account_settings(request):
             messages.error(request, f"Form invalid.")
 
     return render(request, "network/account_settings.html", {
-        "form": UserForm(initial=context),
+        "form": form,
         "last_login": request.user.last_login,
         "date_joined": request.user.date_joined
         })

@@ -6,7 +6,7 @@ from .models import User, Post
 class UserForm(ModelForm):
     class Meta:
         model = User
-        fields = ["username", "first_name", "last_name", "email",]# "bio", "profile_pic_url",]
+        fields = ["username", "first_name", "last_name", "email", "bio", "profile_pic_url",]
         widgets = {"bio": Textarea(attrs={
             "rows": 6
             })}

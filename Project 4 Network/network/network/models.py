@@ -3,9 +3,9 @@ from django.db.models import *
 
 
 class User(AbstractUser):
-    # bio = TextField(max_length=280)
-    # profile_pic_url = URLField(blank=True)
-    pass
+    bio = TextField(max_length=280, blank=True)
+    profile_pic_url = URLField(blank=True)
+
 
 class Post(Model):
     author = ForeignKey(User, on_delete=CASCADE)
@@ -24,6 +24,7 @@ class Post(Model):
             "posted": self.posted,
             "edited": self.edited
         }
+
 
 class Like(Model):
     post = ForeignKey(Post, on_delete=CASCADE)

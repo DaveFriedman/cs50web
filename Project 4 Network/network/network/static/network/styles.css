@@ -7,9 +7,14 @@ body {
   color: #0275d8;
   cursor: pointer;
 }
+.post-author-profile-pic {
+  object-fit: cover;
+  height: 45px;
+  width: 45px;
+}
 
-/*
-.feed-image img {
-  width: 100%;
-  height: auto;
-} */
+.profile-page-profile-pic {
+  object-fit: cover;
+  height: 256px;
+  width: 256px;
+}

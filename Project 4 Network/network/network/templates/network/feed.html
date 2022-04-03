@@ -72,7 +72,13 @@
             <div class="bg-white border mt-2">
                 <div class="d-flex flex-row justify-content-between align-items-center p-2 border-bottom">
                     <div class="d-flex flex-row align-items-center p-2y">
-                        <a href="{% url 'profile' post.author.id post.author.username %}"><img class="rounded-circle" src="{% static 'network/default_user.png' %}" width="45"></a>
+                        <a href="{% url 'profile' post.author.id post.author.username %}">
+                            {% if post.author.profile_pic_url %}
+                            <img class="post-author-profile-pic rounded-circle" src={{post.author.profile_pic_url}}>
+                            {% else %}
+                            <img class="post-author-profile-pic rounded-circle" src="{% static 'network/default_user.png' %}">
+                            {% endif %}
+                        </a>
                         <div class="d-flex flex-column flex-wrap ml-2">
                             <span class="font-weight-bold">
                                 <a href="{% url 'profile' post.author.id post.author.username %}">{{post.author | capfirst}}</a>

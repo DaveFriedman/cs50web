@@ -3,8 +3,10 @@ body {
 }
 
 .likes {
-  font-size: 22px;
-  color: #0275d8;
+  /* font-size: 22px; */
+  /* color: #0275d8; */
+  height: 22px;
+  width: 22px;
   cursor: pointer;
 }
 .post-author-profile-pic {

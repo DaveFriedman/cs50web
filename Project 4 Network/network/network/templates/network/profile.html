@@ -92,8 +92,8 @@
                     {{form | crispy}}
                 </div>
                 <div class="modal-footer btn-group">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <input type="submit" value="Post!" class="btn btn-success">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
@@ -162,9 +162,8 @@
                     <!-- <i class="fa fa-thumbs-up"></i> -->
                     Liked by: Ann, Bob, Cal, Don...
                     <!-- {#% if user in %#} -->
-                    <img class="likes" src="{% static 'network/heartblue.png'
-                    %}" height="22" width="22">
-                    <!-- <img class="likes" src="{% static 'network/heartgreen.png' %}" width="22"> -->
+                    <img class="likes" src="{% static 'network/heartblue.png' %}">
+                    <!-- <img class="likes" src="{% static 'network/heartgreen.png' %}"> -->
                 </div>
             </div>
         </div>

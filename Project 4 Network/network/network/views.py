@@ -16,17 +16,15 @@ from .models import User, Post, Like, Follow
 from .forms import  PostForm, SignUpForm, UserForm
 
 # TODO
-# Update User model: User attributes? (profile pic, email uniqueness, bio)
-# migrate User model
-# Update-password page
-# time to start javascript async & serialization
-
+# async create_post
 
 def index(request):
     posts = Post.objects.all().order_by("-id")
+
     paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+
     return render(request, "network/feed.html", {
         "form":  PostForm(),
         "posts": page_obj
@@ -36,11 +34,13 @@ def index(request):
 @login_required
 def following(request):
     user = request.user
-    creators = Follow.objects.filter(follower=user).values('creator')
+    creators = Follow.objects.filter(follower=user).values("creator")
     posts = Post.objects.filter(author__in=creators).order_by("-id")
+
     paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+
     return render(request, "network/feed.html", {
         "form":  PostForm(),
         "posts": page_obj
@@ -75,7 +75,7 @@ def following(request):
 @login_required
 def create_post(request): # async
     if request.method == "POST":
-        post_body = request.POST.get('post')
+        post_body = request.POST.get("post")
         # print("body:", post_body)
         # [print(p) for p in post_body]
         if post_body is None:
@@ -108,19 +108,18 @@ def edit_post(request, postid):
             try:
                 post.body = form.cleaned_data["body"]
                 post.edited = timezone.now()
-                post.save(update_fields=['body', 'edited'])
+                post.save(update_fields=["body", "edited"])
                 messages.success(request, "Your post is updated!")
             except IntegrityError as e:
                 messages.error(request, f"{e.__cause__}")
             return HttpResponseRedirect(reverse("index"))
         else:
             messages.error(request, f"Invalid submission")
-            return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request, "network/edit_post.html", {
-            "postid": postid,
-            "form": form
-        })
+
+    return render(request, "network/edit_post.html", {
+        "postid": postid,
+        "form": form
+    })
 
 
 @login_required
@@ -137,8 +136,9 @@ def profile(request, profileid, profilename):
     posts = Post.objects.filter(author=profile).order_by("-id")
 
     paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+
     return render(request, "network/profile.html", {
         "profile": profile,
         "follower_count": Follow.objects.filter(creator=profile).count(),
@@ -163,11 +163,7 @@ def account_settings(request):
                 messages.success(request, "Your account settings are updated!")
             except IntegrityError as e:
                 messages.error(request, f"error: {e.__cause__}")
-            return render(request, "network/account_settings.html", {
-                "form": form,
-                "last_login": request.user.last_login,
-                "date_joined": request.user.date_joined
-                })
+            redirect("settings")
         else:
             messages.error(request, f"Please correct the error below.s")
 
@@ -182,7 +178,7 @@ def account_settings(request):
 def change_account_password(request):
     form = PasswordChangeForm(request.user)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = PasswordChangeForm(data=request.POST, instance=request.user)
 
         if form.is_valid():
@@ -190,15 +186,15 @@ def change_account_password(request):
                 user = form.save(commit=False)
                 user.save()
                 update_session_auth_hash(request, user)
-                messages.success(request, ('Your password was updated!'))
+                messages.success(request, ("Your password was updated!"))
             except IntegrityError as e:
                 messages.error(request, f"error: {e.__cause__}")
-            return redirect('password')
+            return redirect("password")
         else:
-            messages.error(request, ('Please correct the error below.'))
+            messages.error(request, ("Please correct the error below."))
 
-    return render(request, 'network/change_account_password.html', {
-        'form': form
+    return render(request, "network/change_account_password.html", {
+        "form": form
     })
 
 
@@ -216,9 +212,8 @@ def login_view(request):
             return HttpResponseRedirect(reverse("index"))
         else:
             messages.error(request, ("Invalid username and/or password."))
-            return render(request, "network/login.html")
-    else:
-        return render(request, "network/login.html")
+
+    return render(request, "network/login.html")
 
 
 def logout_view(request):
@@ -241,5 +236,5 @@ def register(request):
                 messages.error(request, f"error: {e.__cause__}")
 
     return render(request, "network/register.html", {
-        'form': form
+        "form": form
     })

@@ -1,10 +1,8 @@
-{% extends "network/layout.html" %}
+{% extends "network/feed.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
-
-{% block body %}
 
 
+{% block profile %}
 <!-- profile -->
 <div class="container">
     <div class="d-flex justify-content-center row">
@@ -44,51 +42,10 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
 
-<!-- Button for create-post modal -->
-{% if user == profile %}
-<div class="container">
-    <div class="d-flex justify-content-center row">
-        <div class="col-md-8 px-2">
-            <div class="bg-white border">
-                <div class="align-items-center p-2 mr-3">
-                    <button id="create-post-button" type="button" class="btn btn-block btn-outline-primary m-2" data-toggle="modal" data-target="#create-post-modal">
-                        What's on your mind?
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Modal for edit-post form -->
-<div class="modal fade" name="create-post-modal" id="create-post-modal" tabindex="-1" aria-labelledby="create-post-label" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="create-post-label">Create post</h3>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="create-post" name="create-post" action="{% url 'create_post' %}" method="POST">
-                <div class="modal-body">
-                    {% csrf_token %}
-                    {{form | crispy}}
-                </div>
-                <div class="modal-footer btn-group">
-                    <input type="submit" value="Post!" class="btn btn-success">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-{% endif %}
-
-
+{% block postheader %}
 <!-- posts -->
 {% if posts %}
 <div class="container">
@@ -100,95 +57,6 @@
                 {% else %}
                 Your posts
                 {% endif %}</h3>
-        </div>
-    </div>
-</div>
-
-
-{% for post in posts %}
-<div class="container">
-    <div class="d-flex justify-content-center row">
-        <div class="col-md-8 p-2">
-            <div class="bg-white border mt-2">
-                <div class="d-flex flex-row justify-content-between align-items-center p-2 border-bottom">
-                    <div class="d-flex flex-row align-items-center p-2y">
-                        <a href="{% url 'profile' post.author.id post.author.username %}">
-                            {% if profile.profile_pic_url %}
-                            <img class="post-author-profile-pic rounded-circle" src={{post.author.profile_pic_url}}>
-                            {% else %}
-                            <img class="post-author-profile-pic rounded-circle" src="{% static 'network/default_user.png' %}">
-                            {% endif %}
-                        </a>
-                        <div class="d-flex flex-column flex-wrap ml-2">
-                            <span class="font-weight-bold">
-                                <a href="{% url 'profile' post.author.id post.author.username %}">{{post.author | capfirst}}</a>
-                            </span>
-                            <div>
-                                <span class="text-black-50 time" data-toggle="tooltip" data-placement="top" title="{{post.posted}}">
-                                    <!-- <a href="{% url 'read_post' post.id %}">{{post.posted}}</a> -->
-                                    Posted {{post.posted | timesince}} ago.
-                                </span>
-                                {% if post.posted != post.edited %}
-                                <span class="text-black-50 time" data-toggle="tooltip" data-placement="top" title="{{post.edited}}">
-                                    <!-- Updated {{post.posted | timesince:post.edited}} later. -->
-                                    Updated {{post.edited | timesince}} ago.
-                                </span>
-                                {% endif %}
-                                {% if user == post.author %}
-                                    <!-- <a href="#" data-toggle="modal" data-target="#create-post-modal">Edit</a> -->
-                                    <a href="{% url 'edit_post' post.id %}">Edit</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-2 ml-2">
-                    <span>{{post.body | linebreaksbr}}</span>
-                </div>
-                <div class="d-flex justify-content-between mx-2 mt-2 p-2">
-                    <!-- <i class="fa fa-thumbs-up"></i> -->
-                    Liked by: Ann, Bob, Cal, Don...
-                    <!-- {#% if user in %#} -->
-                    <img class="likes" src="{% static 'network/heartblue.png' %}">
-                    <!-- <img class="likes" src="{% static 'network/heartgreen.png' %}"> -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endfor %}
-
-
-<!-- pagination -->
-<nav aria-label="Page navigation">
-    <ul class="pagination pagination justify-content-center p-2 mt-4">
-
-        {% if posts.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
-            <li class="page-item"><a class="page-link" href="?page={{posts.previous_page_number}}">Previous</a></li>
-        {% else %}
-            <li class="page-item disabled"><a class="page-link" href="?page=1">&laquo; First</a></li>
-            <li class="page-item disabled"><a class="page-link" href="?page=1">Previous</a></li>
-        {% endif %}
-
-        <li class="page-item active"><a class="page-link" href="?page={{posts.number}}">{{posts.number}} of {{posts.paginator.num_pages}}</a></li>
-
-        {% if posts.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">Next</a></li>
-            <li class="page-item"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last &raquo;</a></li>
-        {% else %}
-            <li class="page-item disabled"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Next</a></li>
-            <li class="page-item disabled"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last &raquo;</a></li>
-        {% endif %}
-    </ul>
-</nav>
-
-
-{% else %}
-<div class="container">
-    <div class="d-flex justify-content-center row">
-        <div class="col-md-8 px-2 pt-4">
-            <h3 class="text-black-50 mb-0 pb-0">No posts</h3>
         </div>
     </div>
 </div>

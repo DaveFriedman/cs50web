@@ -4,6 +4,10 @@
 
 {% block body %}
 
+<!-- If this is a profile page, show the profile -->
+{% block profile %}
+{% endblock %}
+
 
 <!-- Button for create-post modal -->
 {% if user.is_authenticated %}
@@ -12,7 +16,11 @@
         <div class="col-md-8 p-2">
             <div class="bg-white border mt-2">
                 <div class="align-items-center p-2 mr-3">
-                    <img class="rounded-circle" src="{% static 'network/default_user.png' %}" width="45">
+                    {% if user.profile_pic_url %}
+                    <img class="post-author-profile-pic rounded-circle" src="{{user.profile_pic_url}}">
+                    {% else %}
+                    <img class="post-author-profile-pic rounded-circle" src="{% static 'network/default_user.png' %}">
+                    {% endif %}
                     <span class="h2 align-middle">Hi <strong>{{user.username | capfirst}}!</strong></span>
                     <button id="create-post-button" type="button" class="btn btn-block btn-outline-primary m-2" data-toggle="modal" data-target="#create-post-modal">
                         What's on your mind?
@@ -49,6 +57,10 @@
 </div>
 {% endif %}
 
+<!-- If this is a profile page, show the post header -->
+{% block postheader %}
+{% endblock %}
+
 
 <!-- posts -->
 {% if posts %}
@@ -61,7 +73,7 @@
                     <div class="d-flex flex-row align-items-center p-2y">
                         <a href="{% url 'profile' post.author.id post.author.username %}">
                             {% if post.author.profile_pic_url %}
-                            <img class="post-author-profile-pic rounded-circle" src={{post.author.profile_pic_url}}>
+                            <img class="post-author-profile-pic rounded-circle" src="{{post.author.profile_pic_url}}">
                             {% else %}
                             <img class="post-author-profile-pic rounded-circle" src="{% static 'network/default_user.png' %}">
                             {% endif %}

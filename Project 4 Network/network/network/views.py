@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.paginator import Paginator
+from django.core.serializers import *
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
@@ -16,6 +17,8 @@ from .forms import  PostForm, SignUpForm, UserForm
 
 # TODO
 # async create_post
+# likes
+# follows
 
 def index(request):
     posts = Post.objects.all().order_by("-id")
@@ -46,6 +49,26 @@ def following(request):
     })
 
 
+@login_required
+def profile(request, profileid, profilename):
+    profile = User.objects.get(id = profileid)
+    posts = Post.objects.filter(author=profile).order_by("-id")
+
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "network/profile.html", {
+        "form":  PostForm(),
+        "profile": profile,
+        "follower_count": Follow.objects.filter(creator=profile).count(),
+        "following_count": Follow.objects.filter(follower=profile).count(),
+        "user_follows_profile": True if Follow.objects.filter(
+            follower=request.user, creator=profile).exists() else False,
+        "posts": page_obj
+    })
+
+
 # @login_required
 # def create_post(request): # not async
 #     form = PostForm()
@@ -71,28 +94,54 @@ def following(request):
 #         })
 
 
-@login_required
-def create_post(request): # async
-    if request.method == "POST":
-        post_body = request.POST.get("post")
-        # print("body:", post_body)
-        # [print(p) for p in post_body]
-        if post_body is None:
-            return JsonResponse({"error": "Post cannot be empty."}, status=400)
+# @login_required
+# def create_post(request): # async
+#     if request.method == "POST":
+#         post_body = request.POST.get("post")
+#         # print("body:", post_body)
+#         # [print(p) for p in post_body]
+#         if post_body is None:
+#             return JsonResponse({"error": "Post cannot be empty."}, status=400)
 
-        try:
-            new_post = Post.objects.create(
-                    body = post_body,
-                    author = request.user,
-                    posted = timezone.now(),
-                    edited = timezone.now()
-                )
-            new_post.save()
-            return JsonResponse({"message": "Post successful."}, status=201)
-        except IntegrityError as e:
-            return JsonResponse({"error": f"{e.__cause__}"}, status=400)
+#         try:
+#             new_post = Post.objects.create(
+#                     body = post_body,
+#                     author = request.user,
+#                     posted = timezone.now(),
+#                     edited = timezone.now()
+#                 )
+#             new_post.save()
+#             return JsonResponse({"message": "Post successful."}, status=201)
+#         except IntegrityError as e:
+#             return JsonResponse({"error": f"{e.__cause__}"}, status=400)
+#     else:
+#         return JsonResponse({"error": "POST request required."}, status=400)
+
+
+@csrf_exempt
+@login_required
+def create_post(request):
+
+    post = Post.objects.get(id=1)
+    JSONSerializer = get_serializer("json")
+    json_serializer = JSONSerializer()
+    json_serializer.serialize(post)
+    new_post = json_serializer.getvalue()
+
+    new_post = serialize("json", Post.objects.get(id=1))
+
+    if request.method == "POST":
+        new_post = json.loads(request.body)
+
+
+        for post in deserialize("json", request.post):
+            if post.is_valid(): # or something
+                print(post.object)
+        pass
     else:
-        return JsonResponse({"error": "POST request required."}, status=400)
+        messages.error(request, f"Must be POST")
+
+    return redirect("index")
 
 
 @login_required
@@ -128,24 +177,6 @@ def read_post(request, postid):
         "posts": [post]
     })
 
-
-@login_required
-def profile(request, profileid, profilename):
-    profile = User.objects.get(id = profileid)
-    posts = Post.objects.filter(author=profile).order_by("-id")
-
-    paginator = Paginator(posts, 10)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, "network/profile.html", {
-        "profile": profile,
-        "follower_count": Follow.objects.filter(creator=profile).count(),
-        "following_count": Follow.objects.filter(follower=profile).count(),
-        "user_follows_profile": True if Follow.objects.filter(
-            follower=request.user, creator=profile).exists() else False,
-        "posts": page_obj
-    })
 
 
 @login_required

@@ -16,15 +16,6 @@ class Post(Model):
     def __str__(self):
         return f"Post {self.id}: by {self.author} at {self.posted}"
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "author": self.author,
-            "body": self.body,
-            "posted": self.posted,
-            "edited": self.edited
-        }
-
 
 class Like(Model):
     post = ForeignKey(Post, on_delete=CASCADE)
@@ -33,14 +24,6 @@ class Like(Model):
 
     def __str__(self):
         return f"#{self.id}: {self.liker} liked {self.post} ({self.timestamp})"
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "post": self.post,
-            "liker": self.liker,
-            "timestamp": self.timestamp
-        }
 
 
 class Follow(Model):

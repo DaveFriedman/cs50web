@@ -8,27 +8,17 @@
         <div class="col-md-8 p-2">
 
             <h2>Hi <strong>{{user.username | capfirst}}</strong></h2>
-            <div class="text-black-50 mb-2">Change your account settings here.
-            <a href="{% url 'password' %}">Change password</a></div>
-
-            {% if messages %}
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                {% for message in messages %}
-                {{message}}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                {% endfor %}
+            <div class="text-black-50 mb-2">
+                Change your account settings here.
+                <a href="{% url 'password' %}">Change password</a>
             </div>
-            {% endif %}
-
             <form action="{% url 'settings' %}" method="POST">
                 {% csrf_token %}
                 {{form | crispy}}
                 <input type="submit" value="Save" class="btn btn-success">
             </form>
 
-            <div class="text-black-50 mt-4 mb-0 pb-0">Your last sign-in was on {{user.last_login}}.</div>
+            <div class="text-black-50 mt-4 mb-0 pb-0">Your last sign-in was on {{user.last_login}}</div>
             <div class="text-black-50 mb-0 pb-0">You joined on {{user.date_joined | date:"F j, Y"}}.</div>
 
         </div>

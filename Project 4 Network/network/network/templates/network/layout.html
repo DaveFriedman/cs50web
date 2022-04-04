@@ -15,11 +15,13 @@
     <!-- Local static -->
     <link rel="stylesheet" href="{% static 'network/styles.css' %}"/>
     <link rel="shortcut icon" href="{% static 'network/favicon.ico' %}"/>
+    <script src="{% static 'network/network.js' %}"></script>
 
 
     </head>
 
 <body>
+<!-- navbar -->
 <nav class="navbar navbar-expand-sm navbar-light bg-light">
 
     <a class="navbar-brand" href="{% url 'index' %}">Network</a>
@@ -38,9 +40,6 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'following' %}">My Follows</a>
             </li>
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="{% url 'create_post' %}">New Post</a>
-            </li> -->
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'profile' user.id user.username %}">My Profile</a>
             </li>
@@ -61,6 +60,25 @@
         </ul>
     </div>
 </nav>
+
+
+<!-- messages -->
+{% if messages %}
+<div class="container">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-8 px-2 pt-4">
+            {% for message in messages %}
+            <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 
 <div class="body">

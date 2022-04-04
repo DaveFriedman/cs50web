@@ -4,18 +4,6 @@
 
 {% block body %}
 
-<script type="text/javascript">
-    // Autofocus textbox when create-post modal pops up
-    $(document).on('shown.bs.modal', function () {
-        $('#id_body').focus()
-    })
-
-    // Enable tooltips for timestamps
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
-</script>
-
 
 <!-- profile -->
 <div class="container">
@@ -143,19 +131,19 @@
                                 {% if post.posted != post.edited %}
                                 <span class="text-black-50 time" data-toggle="tooltip" data-placement="top" title="{{post.edited}}">
                                     <!-- Updated {{post.posted | timesince:post.edited}} later. -->
-                                    Updated {{post.edited | timesince}}.
+                                    Updated {{post.edited | timesince}} ago.
                                 </span>
                                 {% endif %}
                                 {% if user == post.author %}
-                                    <a href="#" data-toggle="modal" data-target="#create-post-modal">Edit</a>
-                                    <!-- <a href="{% url 'edit_post' post.id %}">Edit</a> -->
+                                    <!-- <a href="#" data-toggle="modal" data-target="#create-post-modal">Edit</a> -->
+                                    <a href="{% url 'edit_post' post.id %}">Edit</a>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="p-2 ml-2">
-                    <span>{{post.body}}</span>
+                    <span>{{post.body | linebreaksbr}}</span>
                 </div>
                 <div class="d-flex justify-content-between mx-2 mt-2 p-2">
                     <!-- <i class="fa fa-thumbs-up"></i> -->
@@ -169,6 +157,7 @@
     </div>
 </div>
 {% endfor %}
+
 
 <!-- pagination -->
 <nav aria-label="Page navigation">
@@ -193,6 +182,7 @@
         {% endif %}
     </ul>
 </nav>
+
 
 {% else %}
 <div class="container">

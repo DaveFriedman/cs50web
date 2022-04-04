@@ -8,8 +8,8 @@
         <div class="col-md-8 p-2">
             <div class="bg-white border mt-2">
                 <div class="align-items-center p-3">
-                    <form action="{% url 'create_post' %}" method="POST">
-                        <h2>Edit your post</h2>
+                    <h2>Edit your post</h2>
+                    <form id="edit-post" name="edit-post"action="{% url 'edit_post' postid %}" method="POST">
                         {% csrf_token %}
                         {{form | crispy}}
                         <input type="submit" value="Post" class="btn btn-success">

@@ -8,8 +8,8 @@
         <div class="col-md-8 p-2">
             <div class="bg-white border mt-2">
                 <div class="align-items-center p-3">
+                    <h2>What's on your mind?</h2>
                     <form id="create-post" name="create-post" action="{% url 'create_post' %}" method="POST">
-                        <h2>What's on your mind?</h2>
                         {% csrf_token %}
                         {{form | crispy}}
                         <input type="submit" value="Post" class="btn btn-success">

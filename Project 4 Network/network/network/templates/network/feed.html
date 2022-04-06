@@ -10,7 +10,7 @@
 
 
 <!-- Button for create-post modal -->
-{% if user.is_authenticated %}
+{% if user.is_authenticated and profile == user or user.is_authenticated and profile == None  %}
 <div class="container">
     <div class="d-flex justify-content-center row">
         <div class="col-md-8 p-2">
@@ -21,7 +21,7 @@
                     {% else %}
                     <img class="post-author-profile-pic rounded-circle" src="{% static 'network/default_user.png' %}">
                     {% endif %}
-                    <span class="h2 align-middle">Hi <strong>{{user.username | capfirst}}!</strong></span>
+                    <span class="h2 align-middle">Hi <strong>{{user.username}}!</strong></span>
                     <button id="create-post-button" type="button" class="btn btn-block btn-outline-primary m-2" data-toggle="modal" data-target="#create-post-modal">
                         What's on your mind?
                     </button>
@@ -57,6 +57,7 @@
 </div>
 {% endif %}
 
+
 <!-- If this is a profile page, show the post header -->
 {% block postheader %}
 {% endblock %}
@@ -80,7 +81,7 @@
                         </a>
                         <div class="d-flex flex-column flex-wrap ml-2">
                             <span class="font-weight-bold">
-                                <a href="{% url 'profile' post.author.id post.author.username %}">{{post.author | capfirst}}</a>
+                                <a href="{% url 'profile' post.author.id post.author.username %}">{{post.author}}</a>
                             </span>
                             <div>
                                 <span class="text-black-50 time" data-toggle="tooltip" data-placement="top" title="{{post.posted}}">

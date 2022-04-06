@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.core.serializers import *
 from django.db import IntegrityError
@@ -28,7 +29,7 @@ def index(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, "network/feed.html", {
-        "form":  PostForm(),
+        "form": PostForm(),
         "posts": page_obj
     })
 
@@ -44,7 +45,7 @@ def following(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, "network/feed.html", {
-        "form":  PostForm(),
+        "form": PostForm(),
         "posts": page_obj
     })
 
@@ -59,7 +60,7 @@ def profile(request, profileid, profilename):
     page_obj = paginator.get_page(page_number)
 
     return render(request, "network/profile.html", {
-        "form":  PostForm(),
+        "form": PostForm(),
         "profile": profile,
         "follower_count": Follow.objects.filter(creator=profile).count(),
         "following_count": Follow.objects.filter(follower=profile).count(),
@@ -176,6 +177,25 @@ def read_post(request, postid):
     return render(request, "network/feed.html", {
         "posts": [post]
     })
+
+
+@login_required
+def follow(request, profileid):
+    follower = request.user
+    creator = User.objects.get(id=profileid)
+
+    try:
+        f = Follow.objects.get(creator=creator, follower=follower)
+        f.delete()
+        user_follows_profile = False
+    except Follow.DoesNotExist:
+        f = Follow.objects.create(creator=creator, follower=follower)
+        f.save()
+        user_follows_profile = True
+    except IntegrityError as e:
+        messages.error(request, f"{e.__cause__}")
+        redirect('profile', profileid=creator.id, profilename=creator.username)
+    return JsonResponse({"user_follows_profile": user_follows_profile})
 
 
 

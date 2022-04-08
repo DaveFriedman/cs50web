@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.querySelector("#create-post-submit")?.addEventListener("submit", submit_post, false);
   document.querySelector(".follow-button ")?.addEventListener("click", follow_profile, false);
-  // document.querySelectorAll(".like-button").forEach.addEventListener("click", like_post, false);
+  document.querySelectorAll(".like-button").forEach(e => e.addEventListener("click", like_post, false));
 
   // Autofocus textbox when create-post modal pops up
   $(document).on("shown.bs.modal", function () {
@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   .then((response) => response.json())
   .then((data) => {
-    console.log("follow profile: ", `${data.is_follower}`)
     if (data.is_follower === true) {
       document.querySelector("#is_follower_text").innerHTML = "<strong>you</strong> and ";
       document.querySelector("#follow-button-text").innerHTML = "Following";
@@ -41,15 +40,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 };
 
+// Like and unlike posts
 function like_post() {
-  fetch(`/like/${this.dataset.id}`)
+  like_count = parseInt(document.querySelector(`#like-count-${this.dataset.id}`).innerHTML);
+  fetch(`/p/${this.dataset.id}/like`)
+
   .then((response) => response.json())
   .then((data) => {
-    if (data.user_likes_post === true) {
-      document.querySelector(`#follow-image-${this.post.id}`).class = "bi bi-heart-fill";
+    if (data.is_liker === true) {
+      document.querySelector(`#like-image-${this.dataset.id}`).className = "bi bi-heart-fill";
+      document.querySelector(`#like-count-${this.dataset.id}`).innerHTML = like_count+1;
     }
     else {
-      document.querySelector(`#follow-image-${this.post.id}`).class = "bi bi-heart";
+      document.querySelector(`#like-image-${this.dataset.id}`).className = "bi bi-heart";
+      document.querySelector(`#like-count-${this.dataset.id}`).innerHTML = like_count-1;
     }
   })
 }

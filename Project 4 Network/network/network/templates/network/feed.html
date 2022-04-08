@@ -102,16 +102,15 @@
                 </div>
                 <div class="mx-2 mt-2 p-2">
                     {% if post.user_likes %}
-                    <button type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
-                        <i id="follow-image-{{post.id}}" class="bi bi-heart-fill"></i>
+                    <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
+                        <i id="like-image-{{post.id}}" class="bi bi-heart-fill"></i>
                     </button>
-                    <span data-id="{{post.num_likes}}" class="ml-2">You and {{post.num_likes}} other{{post.num_likes|pluralize}}</span>
+                    <span id="like-count-{{post.id}}" class="ml-2">{{post.num_likes}}</span>
                     {% else %}
-                    <button id="follow-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
-                        <i class="bi bi-heart"></i>
+                    <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
+                        <i id="like-image-{{post.id}}" class="bi bi-heart"></i>
                     </button>
-                    <span data-id="{{post.num_likes}}" class="ml-2">{{post.num_likes}}, You don't like this</span>
-                    <!-- <img class="likes" src="{% static 'network/heartblue.png' %}" width="22"> -->
+                    <span id="like-count-{{post.id}}" class="ml-2">{{post.num_likes}}</span>
                     {% endif %}
                 </div>
             </div>

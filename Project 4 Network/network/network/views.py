@@ -19,7 +19,7 @@ from .forms import  PostForm, SignUpForm, UserForm
 
 # TODO
 # async create_post
-# likes
+# async edit_post
 
 def index(request):
     if request.user.is_authenticated:
@@ -209,6 +209,25 @@ def read_post(request, postid):
 
 
 @login_required
+def like_post(request, postid):
+    liker = request.user
+    post = Post.objects.get(id=postid)
+
+    try:
+        l = Like.objects.get(liker=liker, post=post)
+        l.delete()
+        is_liker = False
+    except Like.DoesNotExist:
+        l = Like.objects.create(liker=liker, post=post)
+        l.save()
+        is_liker = True
+    except IntegrityError as e:
+        messages.error(request, f"{e.__cause__}")
+        # redirect('profile', profileid=creator.id, profilename=creator.username)
+    return JsonResponse({"is_liker": is_liker})
+
+
+@login_required
 def follow(request, profileid):
     follower = request.user
     creator = User.objects.get(id=profileid)
@@ -225,25 +244,6 @@ def follow(request, profileid):
         messages.error(request, f"{e.__cause__}")
         redirect('profile', profileid=creator.id, profilename=creator.username)
     return JsonResponse({"is_follower": is_follower})
-
-
-@login_required
-def like(request, postid):
-    liker = request.user
-    post = User.objects.get(id=postid)
-
-    try:
-        l = Like.objects.get(liker=liker, post=post)
-        l.delete()
-        user_likes_post = False
-    except Follow.DoesNotExist:
-        l = Like.objects.get(liker=liker, post=post)
-        l.save()
-        user_likes_post = True
-    except IntegrityError as e:
-        messages.error(request, f"{e.__cause__}")
-        # redirect('profile', profileid=creator.id, profilename=creator.username)
-    return JsonResponse({"user_likes_post": user_likes_post})
 
 
 @login_required

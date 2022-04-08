@@ -1,4 +1,4 @@
-import json
+import json as j
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.core.serializers import *
 from django.db import IntegrityError
+from django.db.models import Count, Case, BooleanField, Value, When
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -19,10 +20,20 @@ from .forms import  PostForm, SignUpForm, UserForm
 # TODO
 # async create_post
 # likes
-# follows
 
 def index(request):
-    posts = Post.objects.all().order_by("-id")
+    if request.user.is_authenticated:
+        posts = Post.objects.annotate(
+            user_likes=Case(
+                When(like__liker=request.user, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ),
+            num_likes=Count('like'),
+        ).order_by("-id")
+    else:
+        posts = Post.objects.annotate(num_likes=Count('like')).order_by("-id")
+
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
@@ -34,11 +45,20 @@ def index(request):
     })
 
 
+
 @login_required
 def following(request):
     user = request.user
     creators = Follow.objects.filter(follower=user).values("creator")
-    posts = Post.objects.filter(author__in=creators).order_by("-id")
+    posts = Post.objects.filter(author__in=creators
+        ).annotate(
+            user_likes=Case(
+                When(like__liker=request.user, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ),
+            num_likes=Count('like'),
+        ).order_by("-id")
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
@@ -53,7 +73,17 @@ def following(request):
 @login_required
 def profile(request, profileid, profilename):
     profile = User.objects.get(id = profileid)
-    posts = Post.objects.filter(author=profile).order_by("-id")
+
+    posts = Post.objects.filter(author=profile
+        ).annotate(
+            user_likes=Case(
+                When(like__liker=request.user, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ),
+            num_likes=Count('like'),
+        ).order_by("-id")
+    # posts = Post.objects.filter(author=profile).order_by("-id")
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
@@ -123,22 +153,21 @@ def profile(request, profileid, profilename):
 @login_required
 def create_post(request):
 
-    post = Post.objects.get(id=1)
-    JSONSerializer = get_serializer("json")
-    json_serializer = JSONSerializer()
-    json_serializer.serialize(post)
-    new_post = json_serializer.getvalue()
-
-    new_post = serialize("json", Post.objects.get(id=1))
+    # new_post = serialize("json", Post.objects.get(id=1))
 
     if request.method == "POST":
-        new_post = json.loads(request.body)
+        body = request.POST['body'] #works
+        # body = j.loads(request.POST['body'])
+        # new_post = body['body']
+        print(body)
+
+        return JsonResponse({"message": "create_post."}, status=201)
 
 
-        for post in deserialize("json", request.post):
-            if post.is_valid(): # or something
-                print(post.object)
-        pass
+        # for post in deserialize("json", request.post):
+        #     if post.is_valid(): # or something
+        #         print(post.object)
+        # pass
     else:
         messages.error(request, f"Must be POST")
 
@@ -187,16 +216,34 @@ def follow(request, profileid):
     try:
         f = Follow.objects.get(creator=creator, follower=follower)
         f.delete()
-        user_follows_profile = False
+        is_follower = False
     except Follow.DoesNotExist:
         f = Follow.objects.create(creator=creator, follower=follower)
         f.save()
-        user_follows_profile = True
+        is_follower = True
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
         redirect('profile', profileid=creator.id, profilename=creator.username)
-    return JsonResponse({"user_follows_profile": user_follows_profile})
+    return JsonResponse({"is_follower": is_follower})
 
+
+@login_required
+def like(request, postid):
+    liker = request.user
+    post = User.objects.get(id=postid)
+
+    try:
+        l = Like.objects.get(liker=liker, post=post)
+        l.delete()
+        user_likes_post = False
+    except Follow.DoesNotExist:
+        l = Like.objects.get(liker=liker, post=post)
+        l.save()
+        user_likes_post = True
+    except IntegrityError as e:
+        messages.error(request, f"{e.__cause__}")
+        # redirect('profile', profileid=creator.id, profilename=creator.username)
+    return JsonResponse({"user_likes_post": user_likes_post})
 
 
 @login_required

@@ -4,12 +4,10 @@
 
 {% block body %}
 
-<!-- If this is a profile page, show the profile -->
 {% block profile %}
 {% endblock %}
 
 
-<!-- Button for create-post modal -->
 {% if user.is_authenticated and profile == user or user.is_authenticated and profile == None  %}
 <div class="container">
     <div class="d-flex justify-content-center row">
@@ -32,7 +30,6 @@
 </div>
 
 
-<!-- Modal for create-post form -->
 <div class="modal fade" name="create-post-modal" id="create-post-modal" tabindex="-1" aria-labelledby="create-post-label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -48,7 +45,7 @@
                     {{form | crispy}}
                 </div>
                 <div class="modal-footer btn-group">
-                    <input type="submit" value="Post!" class="btn btn-success">
+                    <input id="create-post-submit" type="submit" value="Post!" class="btn btn-success">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </form>
@@ -58,12 +55,10 @@
 {% endif %}
 
 
-<!-- If this is a profile page, show the post header -->
 {% block postheader %}
 {% endblock %}
 
 
-<!-- posts -->
 {% if posts %}
 {% for post in posts %}
 <div class="container">
@@ -105,12 +100,19 @@
                 <div class="p-2 ml-2">
                     <span>{{post.body | linebreaksbr}}</span>
                 </div>
-                <div class="d-flex justify-content-between mx-2 mt-2 p-2">
-                    <!-- <i class="fa fa-thumbs-up"></i> -->
-                    Liked by: Ann, Bob, Cal, Don...
-                    <!-- {#% if user in %#} -->
-                    <img class="likes" src="{% static 'network/heartgreen.png' %}" width="22">
-                    <!-- <img class="likes" src="{% static 'network/heartgreen.png' %}" width="22"> -->
+                <div class="mx-2 mt-2 p-2">
+                    {% if post.user_likes %}
+                    <button type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
+                        <i id="follow-image-{{post.id}}" class="bi bi-heart-fill"></i>
+                    </button>
+                    <span data-id="{{post.num_likes}}" class="ml-2">You and {{post.num_likes}} other{{post.num_likes|pluralize}}</span>
+                    {% else %}
+                    <button id="follow-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                    <span data-id="{{post.num_likes}}" class="ml-2">{{post.num_likes}}, You don't like this</span>
+                    <!-- <img class="likes" src="{% static 'network/heartblue.png' %}" width="22"> -->
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -119,7 +121,6 @@
 {% endfor %}
 
 
-<!-- pagination -->
 <nav aria-label="Page navigation">
     <ul class="pagination pagination justify-content-center p-2 mt-4">
 

@@ -20,3 +20,10 @@ body {
   height: 256px;
   width: 256px;
 }
+/*
+.is_follower:hover span {
+  display: none;
+}
+.is_follower:hover:before {
+  content: "Unfollow";
+} */

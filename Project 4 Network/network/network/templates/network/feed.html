@@ -104,13 +104,13 @@
                     {% if post.user_likes %}
                     <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
                         <i id="like-image-{{post.id}}" class="bi bi-heart-fill"></i>
+                        <span id="like-count-{{post.id}}" class="ml-1">{{post.num_likes}}</span>
                     </button>
-                    <span id="like-count-{{post.id}}" class="ml-2">{{post.num_likes}}</span>
                     {% else %}
                     <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
                         <i id="like-image-{{post.id}}" class="bi bi-heart"></i>
+                        <span id="like-count-{{post.id}}" class="ml-1">{{post.num_likes}}</span>
                     </button>
-                    <span id="like-count-{{post.id}}" class="ml-2">{{post.num_likes}}</span>
                     {% endif %}
                 </div>
             </div>

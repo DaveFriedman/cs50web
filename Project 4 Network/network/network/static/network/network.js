@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-
   document.querySelector("#create-post-submit")?.addEventListener("submit", submit_post, false);
   document.querySelector(".follow-button ")?.addEventListener("click", follow_profile, false);
   document.querySelectorAll(".like-button").forEach(e => e.addEventListener("click", like_post, false));
@@ -10,10 +9,11 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#id_body").focus();
   });
 
-  // Enable tooltips for timestamps
+  // Enable bootstrap tooltips for timestamps
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
   });
+
 });
 
  // Follow and unfollow creators

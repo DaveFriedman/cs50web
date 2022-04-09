@@ -3,16 +3,16 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.core.exceptions import ObjectDoesNotExist
+# from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.core.serializers import *
+# from django.core.serializers import *
 from django.db import IntegrityError
 from django.db.models import Count, Case, BooleanField, Value, When
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post, Like, Follow
 from .forms import  PostForm, SignUpForm, UserForm
@@ -50,6 +50,7 @@ def index(request):
 def following(request):
     user = request.user
     creators = Follow.objects.filter(follower=user).values("creator")
+
     posts = Post.objects.filter(author__in=creators
         ).annotate(
             user_likes=Case(
@@ -83,7 +84,6 @@ def profile(request, profileid, profilename):
             ),
             num_likes=Count('like'),
         ).order_by("-id")
-    # posts = Post.objects.filter(author=profile).order_by("-id")
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
@@ -94,7 +94,7 @@ def profile(request, profileid, profilename):
         "profile": profile,
         "follower_count": Follow.objects.filter(creator=profile).count(),
         "following_count": Follow.objects.filter(follower=profile).count(),
-        "user_follows_profile": True if Follow.objects.filter(
+        "is_follower": True if Follow.objects.filter(
             follower=request.user, creator=profile).exists() else False,
         "posts": page_obj
     })
@@ -149,7 +149,6 @@ def profile(request, profileid, profilename):
 #         return JsonResponse({"error": "POST request required."}, status=400)
 
 
-@csrf_exempt
 @login_required
 def create_post(request):
 
@@ -223,7 +222,7 @@ def like_post(request, postid):
         is_liker = True
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
-        # redirect('profile', profileid=creator.id, profilename=creator.username)
+        redirect('index')
     return JsonResponse({"is_liker": is_liker})
 
 
@@ -242,7 +241,8 @@ def follow(request, profileid):
         is_follower = True
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
-        redirect('profile', profileid=creator.id, profilename=creator.username)
+        redirect('index')
+
     return JsonResponse({"is_follower": is_follower})
 
 

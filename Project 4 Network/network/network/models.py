@@ -30,6 +30,19 @@ class Like(Model):
         return f"#{self.id}: {self.liker} liked {self.post} ({self.timestamp})"
 
 
+class Dislike(Model):
+    post = ForeignKey(Post, on_delete=CASCADE)
+    disliker = ForeignKey(User, on_delete=CASCADE)
+    timestamp = DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+        UniqueConstraint(fields=["post", "disliker"], name="unique_dislike")]
+
+    def __str__(self):
+        return f"#{self.id}: {self.disliker} liked {self.post} ({self.timestamp})"
+
+
 class Follow(Model):
     creator = ForeignKey(User, on_delete=CASCADE, related_name="creator")
     follower = ForeignKey(User, on_delete=CASCADE, related_name="follower")

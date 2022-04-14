@@ -1,6 +1,4 @@
 {% load static %}
-{% load crispy_forms_tags %}
-
 
 <div class="container">
     <div class="d-flex justify-content-center row">
@@ -33,15 +31,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-2 m-2" style="display:none">
+                <div class="p-2 m-2">
                     <span id="post-body-{{post.id}}">{{post.body | linebreaksbr}}</span>
                 </div>
-                <form id="edit-post" name="edit-post" action="{% url 'edit_post' postid %}" method="POST">
-                    {% csrf_token %}
-                    {{form | crispy}}
-                    <input type="submit" value="Post" class="btn btn-success">
-                </form>
                 <div id="post-footer-{{post.id}}" class="mx-2 mt-2 p-2 d-flex justify-content-between">
+                    <div class="user-items">
                     {% if post.user_likes %}
                     <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
                         <i id="like-image-{{post.id}}" class="bi bi-heart-fill"></i>
@@ -53,6 +47,19 @@
                         <span id="like-count-{{post.id}}" class="ml-1">{{post.num_likes}}</span>
                     </button>
                     {% endif %}
+
+                    {% if post.user_dislikes %}
+                    <button id="dislike-button-{{post.id}}" type="button" class="dislike-button btn btn-outline-dark btn-sm" data-id="{{post.id}}">
+                        <i id="dislike-image-{{post.id}}" class="bi bi-emoji-angry-fill"></i>
+                        <span id="dislike-count-{{post.id}}" class="ml-1">{{post.num_dislikes}}</span>
+                    </button>
+                    {% else %}
+                    <button id="dislike-button-{{post.id}}" type="button" class="dislike-button btn btn-outline-dark btn-sm" data-id="{{post.id}}">
+                        <i id="dislike-image-{{post.id}}" class="bi bi-emoji-angry"></i>
+                        <span id="dislike-count-{{post.id}}" class="ml-1">{{post.num_dislikes}}</span>
+                    </button>
+                    {% endif %}
+                    </div>
                     {% if user == post.author %}
                     <div class="author-items">
                         <!-- <a class="edit-button" data-id="{{post.id}}" href="{% url 'edit_post' post.id %}">Edit</a> -->

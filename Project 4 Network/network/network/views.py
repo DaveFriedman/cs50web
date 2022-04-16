@@ -1,27 +1,20 @@
-import json as j
+import json
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.paginator import Paginator
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from django.core import serializers
 from django.db import IntegrityError
 from django.db.models import Count, Case, BooleanField, Value, When
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.timesince import timesince
-from django.views.decorators.csrf import csrf_exempt
+from django.utils.formats import localize
 
 from .models import User, Post, Like, Dislike, Follow
 from .forms import  PostForm, SignUpForm, UserForm
 
-# TODO
-# async create_post
-# async edit_post
 
 def index(request):
     if request.user.is_authenticated:
@@ -36,15 +29,14 @@ def index(request):
                 default=Value(False),
                 output_field=BooleanField()
             ),
-            num_likes=Count('like'),
-            num_dislikes=Count('dislike'),
+            num_likes=Count("like"),
+            num_dislikes=Count("dislike"),
         ).order_by("-id")
     else:
         posts = Post.objects.annotate(
-            num_likes=Count('like'),
-            num_dislikes=Count('dislike')
+            num_likes=Count("like"),
+            num_dislikes=Count("dislike")
             ).order_by("-id")
-
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
@@ -74,8 +66,8 @@ def following(request):
                 default=Value(False),
                 output_field=BooleanField()
             ),
-            num_likes=Count('like'),
-            num_dislikes=Count('dislike')
+            num_likes=Count("like"),
+            num_dislikes=Count("dislike")
         ).order_by("-id")
 
     paginator = Paginator(posts, 10)
@@ -104,8 +96,8 @@ def profile(request, profileid, profilename):
                 default=Value(False),
                 output_field=BooleanField()
             ),
-            num_likes=Count('like'),
-            num_dislikes=Count('dislike')
+            num_likes=Count("like"),
+            num_dislikes=Count("dislike")
         ).order_by("-id")
 
     paginator = Paginator(posts, 10)
@@ -124,8 +116,9 @@ def profile(request, profileid, profilename):
 
 
 @login_required
-def create_post(request): # not async
+def create_post(request):
     form = PostForm()
+
     if request.method == "POST":
         form = PostForm(request.POST)
 
@@ -139,166 +132,47 @@ def create_post(request): # not async
                 )
                 new_post.save()
                 messages.success(request, "Your post is up!")
+
+                return redirect(request.META.get("HTTP_REFERER"))
+
             except IntegrityError as e:
                 messages.error(request, f"{e.__cause__}")
-            # return HttpResponseRedirect(reverse("index"))
-            # new_post.objects.annotate(num_likes=Count('like'))
-            # return HttpResponse(render_to_string("network/post.html", {"post": new_post}))
-            previous_url = request.META.get('HTTP_REFERER')
 
-            return redirect(previous_url)
-    else:
-        return render(request, "network/create_post.html", {
-            "form": form
-        })
+    return render(request, "network/create_post.html", {
+        "form": form
+    })
 
 
-# @login_required
-# def create_post(request): # async
-#     if request.method == "POST":
-#         post_body = request.POST.get("post")
-#         # print("body:", post_body)
-#         # [print(p) for p in post_body]
-#         if post_body is None:
-#             return JsonResponse({"error": "Post cannot be empty."}, status=400)
-
-#         try:
-#             new_post = Post.objects.create(
-#                     body = post_body,
-#                     author = request.user,
-#                     posted = timezone.now(),
-#                     edited = timezone.now()
-#                 )
-#             new_post.save()
-#             return JsonResponse({"message": "Post successful."}, status=201)
-#         except IntegrityError as e:
-#             return JsonResponse({"error": f"{e.__cause__}"}, status=400)
-#     else:
-#         return JsonResponse({"error": "POST request required."}, status=400)
-
-
-# @login_required
-# def create_post(request):
-#     # new_post = request.POST['body'] # works, don't lose this
-
-#     if request.method == "POST":
-#         form = PostForm(request.POST)
-
-#         if form.is_valid():
-#             try:
-#                 new_post = Post.objects.create(
-#                     body = form.cleaned_data["body"],
-#                     author = request.user,
-#                     posted = timezone.now(),
-#                     edited = timezone.now()
-#                 )
-#                 new_post.save()
-#             except IntegrityError as e:
-#                 messages.error(request, f"{e.__cause__}")
-#                 return HttpResponseRedirect(reverse("index"))
-#             else:
-#                 messages.error(request, f"Invalid submission")
-#         print(new_post)
-#         # n = serializers.serialize('json', [new_post])
-#         n = model_to_dict(new_post)
-#         r = JsonResponse(n, status=201)
-#         return r
-
-#     else:
-#         messages.error(request, f"Must be POST")
-#         return redirect("index")
-
-
-# @login_required
-# def edit_post(request, postid): # async
-#     post = Post.objects.get(id=postid)
-
-#     if request.method == "POST":
-#         post_body_edit = request.Post['body']
-#         form = PostForm(initial={"body": post_body_edit})
-
-#         if form.is_valid(): # and post.author == request.user:
-#             try:
-#                 post.body = form.cleaned_data["post_body_edit"]
-#                 post.edited = timezone.now()
-#                 post.save(update_fields=["body", "edited"])
-
-#                 edited_post = Post.objects.get(id=post.id)
-#                 j = JsonResponse({"post_body_edit": edited_post.body, "post_edited": edited_post.edited})
-#                 print(j)
-#                 return j
-
-#             except IntegrityError as e:
-#                 messages.error(request, f"{e.__cause__}")
-#                 return redirect("index")
-#         else:
-#             messages.error(request, f"Invalid submission")
-#             return redirect("index")
-#     else:
-#         messages.error(request, f"Invalid submission")
-#         return redirect("index")
-
-
-# @login_required # not async
-# def edit_post(request, postid):
-#     post = Post.objects.get(id=postid)
-#     form = PostForm(initial={"body": post.body})
-
-#     if request.method == "POST":
-#         form = PostForm(request.POST)
-
-#         if form.is_valid() and post.author == request.user:
-#             try:
-#                 post.body = form.cleaned_data["body"]
-#                 post.edited = timezone.now()
-#                 post.save(update_fields=["body", "edited"])
-#                 messages.success(request, "Your post is updated!")
-#             except IntegrityError as e:
-#                 messages.error(request, f"{e.__cause__}")
-#             return HttpResponseRedirect(reverse("index"))
-#         else:
-#             messages.error(request, f"Invalid submission")
-
-#     return render(request, "network/edit_post.html", {
-#         "postid": postid,
-#         "form": form
-#     })
-
-
-@csrf_exempt
-@login_required # async
+@login_required
 def edit_post(request, postid):
     post = Post.objects.get(id=postid)
-    form = PostForm(initial={"body": post.body})
+    # form = PostForm(initial={"body": post.body})
 
     if request.method == "POST":
-        form = PostForm(request.POST)
-        fv = True if form.is_valid() else False
-        pr = True if post.author == request.user else False
-        if fv and pr:
+        post_body_update = json.loads(request.body)
+        if post.author == request.user:
             try:
-                post.body = form.cleaned_data["body"]
+                post.body = post_body_update
                 post.edited = timezone.now()
                 post.save(update_fields=["body", "edited"])
-                h1 = HttpResponse(render_to_string("network/post.html", {"post": post}))
-                print(h1)
-                return h1
+
+                updated_post = Post.objects.get(id=postid)
+                return JsonResponse({
+                    "postid": updated_post.id,
+                    "postbody": updated_post.body,
+                    "postedited": localize(updated_post.edited, "DATETIME_FORMAT")
+                    }, status=201)
+
             except IntegrityError as e:
                 messages.error(request, f"{e.__cause__}")
-                print(f"{e.__cause__}")
-                return HttpResponseRedirect(reverse("index"))
-        else:
-            messages.error(request, f"Invalid submission")
-            print(f"fv: {fv}, pr: {pr}")
-            return HttpResponseRedirect(reverse("index"))
+        messages.error(request, f"Invalid submission")
 
-    h = HttpResponse(render_to_string("network/edit_post.html", {
-        "post": post,
-        "postid": postid,
-        "form": form
-        }))
-    print(h)
-    return h
+    return redirect("index")
+    # return render(request, "network/edit_post.html", {
+    #     "post": post,
+    #     "postid": postid,
+    #     "form": form
+    #     })
 
 
 @login_required
@@ -312,8 +186,9 @@ def delete_post(request, postid):
         except IntegrityError as e:
             messages.error(request, f"{e.__cause__}")
     else:
-        messages.error(request, "You can't delete this post.")
-    return redirect('index')
+        messages.error(request, "You cannot delete this post.")
+
+    return redirect("index")
 
 
 @login_required
@@ -339,7 +214,7 @@ def like_post(request, postid):
         is_liker = True
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
-        redirect("index")
+        return redirect("index")
 
     like_count = Like.objects.filter(post=post).count()
     return JsonResponse({"is_liker": is_liker, "like_count": like_count})
@@ -360,7 +235,7 @@ def dislike_post(request, postid):
         is_disliker = True
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
-        redirect("index")
+        return redirect("index")
 
     dislike_count = Dislike.objects.filter(post=post).count()
     return JsonResponse({"is_disliker": is_disliker, "dislike_count": dislike_count})
@@ -381,7 +256,7 @@ def follow(request, profileid):
         is_follower = True
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
-        redirect('index')
+        return redirect("index")
 
     follower_count = Follow.objects.filter(creator=creator).count()
     return JsonResponse({"is_follower": is_follower, "follower_count": follower_count})
@@ -399,11 +274,13 @@ def account_settings(request):
                 user = form.save(commit=False)
                 user.save()
                 messages.success(request, "Your account settings are updated!")
+
+                return redirect("settings")
+
             except IntegrityError as e:
                 messages.error(request, f"error: {e.__cause__}")
-            redirect("settings")
         else:
-            messages.error(request, f"Please correct the error below.s")
+            messages.error(request, f"Please correct the error below.")
 
     return render(request, "network/account_settings.html", {
         "form": form,
@@ -425,11 +302,13 @@ def change_account_password(request):
                 user.save()
                 update_session_auth_hash(request, user)
                 messages.success(request, ("Your password was updated!"))
+
+                return redirect("password")
+
             except IntegrityError as e:
                 messages.error(request, f"error: {e.__cause__}")
-            return redirect("password")
         else:
-            messages.error(request, ("Please correct the error below."))
+            messages.error(request, f"Please correct the error below.")
 
     return render(request, "network/change_account_password.html", {
         "form": form

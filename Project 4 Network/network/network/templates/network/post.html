@@ -4,6 +4,7 @@
     <div class="d-flex justify-content-center row">
         <div class="col-md-8 p-2">
             <div class="bg-white border mt-2">
+
                 <div id="post-header-{{post.id}}" class="d-flex flex-row justify-content-between align-items-center p-2 border-bottom">
                     <div class="d-flex flex-row align-items-center p-2">
                         <a href="{% url 'profile' post.author.id post.author.username %}">
@@ -19,50 +20,53 @@
                             </span>
                             <div id="post-timestamps-{{post.id}}">
                                 <span id="post-posted-{{post.id}}" class="text-black-50 time" data-toggle="tooltip" data-placement="top" title="{{post.posted}}">
-                                    <!-- <a href="{% url 'read_post' post.id %}">Posted {{post.posted | timesince}} ago.</a> -->
                                     Posted {{post.posted | timesince}} ago.
                                 </span>
                                 {% if post.posted != post.edited %}
                                 <span id="post-edited-{{post.id}}" class="text-black-50 time" data-toggle="tooltip" data-placement="top" title="{{post.edited}}">
                                     Updated {{post.edited | timesince}} ago.
                                 </span>
+                                {% else %}
+                                <span id="post-edited-{{post.id}}"></span>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="p-2 m-2">
+
+                <div class="post-body p-2 m-2">
                     <span id="post-body-{{post.id}}">{{post.body | linebreaksbr}}</span>
                 </div>
+
                 <div id="post-footer-{{post.id}}" class="mx-2 mt-2 p-2 d-flex justify-content-between">
                     <div class="user-items">
-                    {% if post.user_likes %}
-                    <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
-                        <i id="like-image-{{post.id}}" class="bi bi-heart-fill"></i>
-                        <span id="like-count-{{post.id}}" class="ml-1">{{post.num_likes}}</span>
-                    </button>
-                    {% else %}
-                    <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
-                        <i id="like-image-{{post.id}}" class="bi bi-heart"></i>
-                        <span id="like-count-{{post.id}}" class="ml-1">{{post.num_likes}}</span>
-                    </button>
-                    {% endif %}
+                        {% if post.user_likes %}
+                        <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
+                            <i id="like-image-{{post.id}}" class="bi bi-heart-fill"></i>
+                            <span id="like-count-{{post.id}}" class="ml-1">{{post.num_likes}}</span>
+                        </button>
+                        {% else %}
+                        <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
+                            <i id="like-image-{{post.id}}" class="bi bi-heart"></i>
+                            <span id="like-count-{{post.id}}" class="ml-1">{{post.num_likes}}</span>
+                        </button>
+                        {% endif %}
 
-                    {% if post.user_dislikes %}
-                    <button id="dislike-button-{{post.id}}" type="button" class="dislike-button btn btn-outline-dark btn-sm" data-id="{{post.id}}">
-                        <i id="dislike-image-{{post.id}}" class="bi bi-emoji-angry-fill"></i>
-                        <span id="dislike-count-{{post.id}}" class="ml-1">{{post.num_dislikes}}</span>
-                    </button>
-                    {% else %}
-                    <button id="dislike-button-{{post.id}}" type="button" class="dislike-button btn btn-outline-dark btn-sm" data-id="{{post.id}}">
-                        <i id="dislike-image-{{post.id}}" class="bi bi-emoji-angry"></i>
-                        <span id="dislike-count-{{post.id}}" class="ml-1">{{post.num_dislikes}}</span>
-                    </button>
-                    {% endif %}
+                        {% if post.user_dislikes %}
+                        <button id="dislike-button-{{post.id}}" type="button" class="dislike-button btn btn-outline-dark btn-sm" data-id="{{post.id}}">
+                            <i id="dislike-image-{{post.id}}" class="bi bi-emoji-angry-fill"></i>
+                            <span id="dislike-count-{{post.id}}" class="ml-1">{{post.num_dislikes}}</span>
+                        </button>
+                        {% else %}
+                        <button id="dislike-button-{{post.id}}" type="button" class="dislike-button btn btn-outline-dark btn-sm" data-id="{{post.id}}">
+                            <i id="dislike-image-{{post.id}}" class="bi bi-emoji-angry"></i>
+                            <span id="dislike-count-{{post.id}}" class="ml-1">{{post.num_dislikes}}</span>
+                        </button>
+                        {% endif %}
                     </div>
+
                     {% if user == post.author %}
                     <div class="author-items">
-                        <!-- <a class="edit-button" data-id="{{post.id}}" href="{% url 'edit_post' post.id %}">Edit</a> -->
                         <button id="edit-button-{{post.id}}" type="button" class="edit-button btn btn-outline-info btn-sm" data-id="{{post.id}}">
                             <i class="bi bi-pencil-square"></i>
                             Edit

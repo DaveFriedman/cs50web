@@ -1,8 +1,0 @@
-// timezones.js
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/resolvedOptions
-
-
-const a = new Intl.DateTimeFormat().resolvedOptions()
-console.log(a)
-
-// > Object { locale: "en-US", calendar: "gregory", numberingSystem: "latn", timeZone: "America/New_York", year: "numeric", month: "numeric", day: "numeric" }

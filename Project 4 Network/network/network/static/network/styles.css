@@ -3,8 +3,6 @@ body {
 }
 
 .likes {
-  /* font-size: 22px; */
-  /* color: #0275d8; */
   height: 22px;
   width: 22px;
   cursor: pointer;
@@ -20,10 +18,7 @@ body {
   height: 256px;
   width: 256px;
 }
-/*
-.is_follower:hover span {
-  display: none;
+
+.post-body {
+  overflow-wrap: break-word;
 }
-.is_follower:hover:before {
-  content: "Unfollow";
-} */

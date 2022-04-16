@@ -1,4 +1,3 @@
-import json
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -11,6 +10,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import localize
+import json
 
 from .models import User, Post, Like, Dislike, Follow
 from .forms import  PostForm, SignUpForm, UserForm
@@ -167,7 +167,7 @@ def edit_post(request, postid):
                 messages.error(request, f"{e.__cause__}")
         messages.error(request, f"Invalid submission")
 
-    return redirect("index")
+    return redirect(request.META.get("HTTP_REFERER"))
     # return render(request, "network/edit_post.html", {
     #     "post": post,
     #     "postid": postid,
@@ -188,7 +188,8 @@ def delete_post(request, postid):
     else:
         messages.error(request, "You cannot delete this post.")
 
-    return redirect("index")
+    return redirect(request.META.get("HTTP_REFERER"))
+
 
 
 @login_required
@@ -214,7 +215,8 @@ def like_post(request, postid):
         is_liker = True
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
-        return redirect("index")
+        return redirect(request.META.get("HTTP_REFERER"))
+
 
     like_count = Like.objects.filter(post=post).count()
     return JsonResponse({"is_liker": is_liker, "like_count": like_count})
@@ -235,7 +237,8 @@ def dislike_post(request, postid):
         is_disliker = True
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
-        return redirect("index")
+        return redirect(request.META.get("HTTP_REFERER"))
+
 
     dislike_count = Dislike.objects.filter(post=post).count()
     return JsonResponse({"is_disliker": is_disliker, "dislike_count": dislike_count})
@@ -256,7 +259,7 @@ def follow(request, profileid):
         is_follower = True
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
-        return redirect("index")
+        return redirect(request.META.get("HTTP_REFERER"))
 
     follower_count = Follow.objects.filter(creator=creator).count()
     return JsonResponse({"is_follower": is_follower, "follower_count": follower_count})
@@ -326,7 +329,15 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            origin = request.META.get("HTTP_ORIGIN")
+            referer = request.META.get("HTTP_REFERER")
+            tail = referer.find("/login?next=") + 12 # len("/login?next=")=12
+            print("origin ", origin, "referer ", referer, "tail ", tail)
+            if tail == 11: #11 = 12-1, where "-1" is referer.find() not found
+                return redirect("index")
+            else:
+                destination = origin + referer[tail:]
+                return redirect(destination)
         else:
             messages.error(request, ("Invalid username and/or password."))
 

@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
   });
-
 });
 
 
@@ -98,10 +97,8 @@ function display_post(postid, body=null, edited=null) {
 };
 
 
- // Follow and unfollow creators
  function follow_profile() {
   fetch(`/follow/${this.dataset.id}`)
-
   .then(response => response.json())
   .then(data => {
     if (data.is_follower === true) {
@@ -121,11 +118,10 @@ function display_post(postid, body=null, edited=null) {
 };
 
 
-// Like and unlike posts
 function like_post() {
   like_count = parseInt(document.querySelector(`#like-count-${this.dataset.id}`).innerHTML);
-  fetch(`/p/${this.dataset.id}/like`)
 
+  fetch(`/p/${this.dataset.id}/like`)
   .then(response => response.json())
   .then(data => {
     if (data.is_liker === true) {
@@ -141,19 +137,18 @@ function like_post() {
 };
 
 
-// Dislike and un-dislike posts
 function dislike_post() {
   dislike_count = parseInt(document.querySelector(`#dislike-count-${this.dataset.id}`).innerHTML);
-  fetch(`/p/${this.dataset.id}/dislike`)
 
+  fetch(`/p/${this.dataset.id}/dislike`)
   .then(response => response.json())
   .then(data => {
     if (data.is_disliker === true) {
-      document.querySelector(`#dislike-image-${this.dataset.id}`).className = "bi bi-emoji-angry-fill";
+      document.querySelector(`#dislike-image-${this.dataset.id}`).className = "bi bi-hand-thumbs-down-fill";
       document.querySelector(`#dislike-count-${this.dataset.id}`).innerHTML = dislike_count+1;
     }
     else {
-      document.querySelector(`#dislike-image-${this.dataset.id}`).className = "bi bi-emoji-angry";
+      document.querySelector(`#dislike-image-${this.dataset.id}`).className = "bi bi-hand-thumbs-down";
       document.querySelector(`#dislike-count-${this.dataset.id}`).innerHTML = dislike_count-1;
     }
   })

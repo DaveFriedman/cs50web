@@ -30,7 +30,7 @@ def index(request):
                 output_field=BooleanField()
             ),
             num_likes=Count("like"),
-            num_dislikes=Count("dislike"),
+            num_dislikes=Count("dislike")
         ).order_by("-id")
     else:
         posts = Post.objects.annotate(
@@ -46,7 +46,6 @@ def index(request):
         "form": PostForm(),
         "posts": page_obj
     })
-
 
 
 @login_required
@@ -116,6 +115,27 @@ def profile(request, profileid, profilename):
 
 
 @login_required
+def read_post(request, postid):
+    post = Post.objects.get(id=postid).annotate(
+            user_likes=Case(
+                When(like__liker=request.user, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ),
+            user_dislikes=Case(
+                When(dislike__disliker=request.user, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ),
+            num_likes=Count("like"),
+            num_dislikes=Count("dislike")
+        )
+    return render(request, "network/post.html", {
+        "posts": post
+    })
+
+
+@login_required
 def create_post(request):
     form = PostForm()
 
@@ -146,7 +166,6 @@ def create_post(request):
 @login_required
 def edit_post(request, postid):
     post = Post.objects.get(id=postid)
-    # form = PostForm(initial={"body": post.body})
 
     if request.method == "POST":
         post_body_update = json.loads(request.body)
@@ -156,11 +175,11 @@ def edit_post(request, postid):
                 post.edited = timezone.now()
                 post.save(update_fields=["body", "edited"])
 
-                updated_post = Post.objects.get(id=postid)
+                updated = Post.objects.get(id=postid)
                 return JsonResponse({
-                    "postid": updated_post.id,
-                    "postbody": updated_post.body,
-                    "postedited": localize(updated_post.edited, "DATETIME_FORMAT")
+                    "postid": updated.id,
+                    "postbody": updated.body,
+                    "postedited": localize(updated.edited, "DATETIME_FORMAT")
                     }, status=201)
 
             except IntegrityError as e:
@@ -168,11 +187,6 @@ def edit_post(request, postid):
         messages.error(request, f"Invalid submission")
 
     return redirect(request.META.get("HTTP_REFERER"))
-    # return render(request, "network/edit_post.html", {
-    #     "post": post,
-    #     "postid": postid,
-    #     "form": form
-    #     })
 
 
 @login_required
@@ -191,15 +205,6 @@ def delete_post(request, postid):
     return redirect(request.META.get("HTTP_REFERER"))
 
 
-
-@login_required
-def read_post(request, postid):
-    post = Post.objects.get(id=postid)
-    return render(request, "network/feed.html", {
-        "posts": [post]
-    })
-
-
 @login_required
 def like_post(request, postid):
     liker = request.user
@@ -216,7 +221,6 @@ def like_post(request, postid):
     except IntegrityError as e:
         messages.error(request, f"{e.__cause__}")
         return redirect(request.META.get("HTTP_REFERER"))
-
 
     like_count = Like.objects.filter(post=post).count()
     return JsonResponse({"is_liker": is_liker, "like_count": like_count})
@@ -241,7 +245,10 @@ def dislike_post(request, postid):
 
 
     dislike_count = Dislike.objects.filter(post=post).count()
-    return JsonResponse({"is_disliker": is_disliker, "dislike_count": dislike_count})
+    return JsonResponse({
+        "is_disliker": is_disliker,
+        "dislike_count": dislike_count
+        })
 
 
 @login_required
@@ -262,7 +269,60 @@ def follow(request, profileid):
         return redirect(request.META.get("HTTP_REFERER"))
 
     follower_count = Follow.objects.filter(creator=creator).count()
-    return JsonResponse({"is_follower": is_follower, "follower_count": follower_count})
+    return JsonResponse({
+        "is_follower": is_follower,
+        "follower_count": follower_count
+        })
+
+
+def login_view(request):
+    if request.method == "POST":
+
+        # Attempt to sign user in
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+
+        # Check if authentication successful
+        if user is not None:
+            login(request, user)
+            origin = request.META.get("HTTP_ORIGIN")
+            referer = request.META.get("HTTP_REFERER")
+            tail = referer.find("/login?next=") + 12 # len("/login?next=")=12
+            print("origin ", origin, "referer ", referer, "tail ", tail)
+            if tail == 11: #11 = 12-1, where "-1" is referer.find() not found
+                return redirect("index")
+            else:
+                destination = origin + referer[tail:]
+                return redirect(destination)
+        else:
+            messages.error(request, ("Invalid username and/or password."))
+
+    return render(request, "network/login.html")
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse("index"))
+
+
+def register(request):
+    form = SignUpForm()
+
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            try:
+                user = form.save()
+                user.save()
+                login(request, user)
+                return HttpResponseRedirect(reverse("index"))
+            except IntegrityError as e:
+                messages.error(request, f"error: {e.__cause__}")
+
+    return render(request, "network/register.html", {
+        "form": form
+    })
 
 
 @login_required
@@ -314,55 +374,5 @@ def change_account_password(request):
             messages.error(request, f"Please correct the error below.")
 
     return render(request, "network/change_account_password.html", {
-        "form": form
-    })
-
-
-def login_view(request):
-    if request.method == "POST":
-
-        # Attempt to sign user in
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-
-        # Check if authentication successful
-        if user is not None:
-            login(request, user)
-            origin = request.META.get("HTTP_ORIGIN")
-            referer = request.META.get("HTTP_REFERER")
-            tail = referer.find("/login?next=") + 12 # len("/login?next=")=12
-            print("origin ", origin, "referer ", referer, "tail ", tail)
-            if tail == 11: #11 = 12-1, where "-1" is referer.find() not found
-                return redirect("index")
-            else:
-                destination = origin + referer[tail:]
-                return redirect(destination)
-        else:
-            messages.error(request, ("Invalid username and/or password."))
-
-    return render(request, "network/login.html")
-
-
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect(reverse("index"))
-
-
-def register(request):
-    form = SignUpForm()
-
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            try:
-                user = form.save()
-                user.save()
-                login(request, user)
-                return HttpResponseRedirect(reverse("index"))
-            except IntegrityError as e:
-                messages.error(request, f"error: {e.__cause__}")
-
-    return render(request, "network/register.html", {
         "form": form
     })

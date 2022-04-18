@@ -40,7 +40,7 @@ class Dislike(Model):
         UniqueConstraint(fields=["post", "disliker"], name="unique_dislike")]
 
     def __str__(self):
-        return f"#{self.id}: {self.disliker} liked {self.post} ({self.timestamp})"
+        return f"#{self.id}: {self.disliker} disliked {self.post} ({self.timestamp})"
 
 
 class Follow(Model):

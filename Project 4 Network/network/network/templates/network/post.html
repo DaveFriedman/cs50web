@@ -40,17 +40,19 @@
 
                 <div id="post-footer-{{post.id}}" class="mx-2 mt-2 p-2 d-flex justify-content-between">
                     <div class="user-items">
-                        {% if post.user_likes %}
-                        <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
-                            <i id="like-image-{{post.id}}" class="bi bi-heart-fill"></i>
+                        <button id="like-button-{{post.id}}" data-id="{{post.id}}" type="button"
+                        class="like-button btn btn-outline-danger btn-sm"
+                        {% if not user.is_authenticated %} disabled {% endif %}>
+                            <i id="like-image-{{post.id}}"
+                                {% if post.user_likes %}
+                                class="bi bi-heart-fill"
+                                {% else %}
+                                class="bi bi-heart"
+                                {% endif %}>
+                            </i>
                             <span id="like-count-{{post.id}}" class="ml-1">{{post.num_likes}}</span>
                         </button>
-                        {% else %}
-                        <button id="like-button-{{post.id}}" type="button" class="like-button btn btn-outline-danger btn-sm" data-id="{{post.id}}">
-                            <i id="like-image-{{post.id}}" class="bi bi-heart"></i>
-                            <span id="like-count-{{post.id}}" class="ml-1">{{post.num_likes}}</span>
-                        </button>
-                        {% endif %}
+
 
                         {% if post.user_dislikes %}
                         <button id="dislike-button-{{post.id}}" type="button" class="dislike-button btn btn-outline-dark btn-sm" data-id="{{post.id}}">

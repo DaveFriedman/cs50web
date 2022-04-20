@@ -3,3 +3,4 @@ __pycache__
 *Env
 Lecture*
 db.sqlite3
+secretkey.txt

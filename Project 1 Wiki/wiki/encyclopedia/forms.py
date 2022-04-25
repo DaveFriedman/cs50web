@@ -9,6 +9,6 @@ class entry_form(forms.Form):
         widget=forms.TextInput()
         )
     body = forms.CharField(
-        label="Body", 
+        label="Body",
         widget=forms.Textarea()
         )

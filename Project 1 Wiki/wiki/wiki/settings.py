@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,6 +45,11 @@ INSTALLED_APPS = [
     'crispy_forms'
 ]
 
+
+# Crispy Forms Template
+# https://django-crispy-forms.readthedocs.io/en/latest/index.html
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -72,12 +78,19 @@ TEMPLATES = [
     },
 ]
 
+
+# Compatability with Bootstrap alerts
+# https://ordinarycoders.com/blog/article/django-messages-framework
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-secondary',
+        messages.INFO: 'alert-info',
+        messages.SUCCESS: 'alert-success',
+        messages.WARNING: 'alert-warning',
+        messages.ERROR: 'alert-danger',
+ }
+
 WSGI_APPLICATION = 'wiki.wsgi.application'
 
-
-# Crispy Forms Template
-# https://django-crispy-forms.readthedocs.io/en/latest/index.html
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

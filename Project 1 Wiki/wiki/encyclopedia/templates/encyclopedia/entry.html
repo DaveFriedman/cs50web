@@ -1,7 +1,7 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block title %}
-    {{title | safe}}
+    {{title | safe|capfirst}}
 {% endblock %}
 
 
@@ -14,13 +14,13 @@
     </div>
     <div>
         <a role="button" class="btn btn-danger btn-sm btn-block"
-           onclick="return confirm('Are you sure you want to delete this entry?');" 
+           onclick="return confirm('Are you sure you want to delete this entry?');"
            href= "{% url 'delete' title %}">Delete this entry</a>
     </div>
 {% endblock %}
 
 {% block body %}
-    <h1>{{title | safe}}</h1>
+    <h1>{{title | safe|capfirst}}</h1>
 
     <p>{{body | safe}}</p>
 {% endblock %}

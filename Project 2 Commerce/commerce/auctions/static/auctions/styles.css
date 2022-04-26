@@ -54,10 +54,9 @@ table td {
 .commenting table td {
   padding: 0.25rem;
 }
+.commentor {
+  font-size: 1.05rem;
+}
 .comment {
   font-size: 1.25rem;
-}
-.commented {
-  font-style: italic;
-  color: #6c757d;
 }

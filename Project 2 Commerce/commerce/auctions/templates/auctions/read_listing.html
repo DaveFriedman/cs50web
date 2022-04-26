@@ -14,7 +14,7 @@
             {% endif %}
         {% endif %}
     </h2>
-    
+
     {% if owner and listing.is_active %}
         <a class="btn btn-warning" style="width:50%" href="{% url 'close' listing.id listing.name %}">Close Listing</a>
     {% elif not listing.is_active %}
@@ -23,7 +23,7 @@
 
     <h6 class="text-muted">Category: {{listing.category}}
         <br>Listed by: {{listing.lister | capfirst}}
-    </h6>        
+    </h6>
 
     {% if listing.image_url %}
         <hr>
@@ -54,7 +54,7 @@
             {% endif %}>
         </form>
     </div>
-    
+
     {% if bids %}
         <table class="table table-striped mb-1">
             {% for bid in bids %}
@@ -71,10 +71,10 @@
 
 <div class="commenting col-lg-3 col-md-5 col-sm-12">
     <h3>Comments</h3>
-    
+
     <div class="comment_form">
         <form action="{% url 'comment' listing.id listing.name %}" method="POST">
-            
+
             {% csrf_token %}
             {{commentform | crispy}}
 
@@ -88,15 +88,17 @@
             {% endif %}>
         </form>
     </div>
-    
+
     {% if comments %}
         <table class="table table-striped mt-2 mb-1">
             {% for comment in comments %}
             <tr>
-                <td>             
-                {{comment.commenter | capfirst}} 
-                <span class="commented">{{comment.commented}}:</span><br>
-                <span class="comment">{{comment.comment}}</span>
+                <td>
+                <div class="d-flex justify-content-between">
+                    <span class="commentor">{{comment.commenter | capfirst}}</span>
+                    <span class="font-weight-light">{{comment.commented}}</span>
+                </div>
+                    <span class="comment">{{comment.comment}}</span>
                 </td>
             </tr>
             {% endfor %}

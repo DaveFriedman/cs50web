@@ -103,13 +103,19 @@ def profile(request, profileid, profilename):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
+    is_follower = True if Follow.objects.filter(
+            follower=request.user, creator=profile).exists() else False
+    follower_count = Follow.objects.filter(creator=profile).count()
+    if is_follower == True:
+        follower_count = follower_count-1
+    following_count = Follow.objects.filter(follower=profile).count()
+
     return render(request, "network/profile.html", {
         "form": PostForm(),
         "profile": profile,
-        "follower_count": Follow.objects.filter(creator=profile).count(),
-        "following_count": Follow.objects.filter(follower=profile).count(),
-        "is_follower": True if Follow.objects.filter(
-            follower=request.user, creator=profile).exists() else False,
+        "follower_count": follower_count,
+        "following_count": following_count,
+        "is_follower": is_follower,
         "posts": page_obj
     })
 

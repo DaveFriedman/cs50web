@@ -1,8 +1,6 @@
 <h2><a href="https://cs50.harvard.edu/web/2020/">CS50 Web 2020</a></h2>
 <h4>Harvard's guide to the principles, languages, and tools that power the design and deployment of applications on the Internet.</h4>
 
-<a href=""></a>, 
-
 <table>
 <tr>
     <td>Project 0: Search</td>
@@ -14,7 +12,7 @@
 <tr>
     <td>Project 1: Wiki</td>
     <td><a href="https://github.com/DaveFriedman/cs50web/tree/master/Project%201%20Wiki/wiki/encyclopedia">:file_folder:Repo</a></td>
-    <td>:computer:Selected files: <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/encyclopedia/views.py">views.py</a>, <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/encyclopedia/util.py">util.py</a> <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/wiki/settings.py">settings.py</a>, <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/encyclopedia/templates/encyclopedia/layout.html">layout.html</a>, <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/encyclopedia/static/encyclopedia/styles.css">styles.css</a>
+    <td>:computer:Selected files: <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/encyclopedia/views.py">views.py</a>, <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/encyclopedia/util.py">util.py</a>, <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/wiki/settings.py">settings.py</a>, <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/encyclopedia/templates/encyclopedia/layout.html">layout.html</a>, <a href="https://github.com/DaveFriedman/cs50web/blob/master/Project%201%20Wiki/wiki/encyclopedia/static/encyclopedia/styles.css">styles.css</a>
 </td>
     <td><a href="https://www.youtube.com/watch?v=V977Fv3qOxg">:tv:Screencast</a></td>
     <td>:link:Live Demo</td>

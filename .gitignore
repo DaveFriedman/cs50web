@@ -5,3 +5,4 @@ Lecture*
 db.sqlite3
 secretkey.txt
 *.mkv
+*.pem

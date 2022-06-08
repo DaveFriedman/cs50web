@@ -21,15 +21,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-secretkeydottext = BASE_DIR + "\\commerce\\secretkey.txt"
+secretkeydottext = os.path.join(BASE_DIR, 'secretkey.txt')
 with open(secretkeydottext):
     key = secretkeydottext
 SECRET_KEY = key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True # Prod: False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [] #Prod: ['commerce.dmfstuff.xyz']
 
 
 # Application definition
@@ -132,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'EST'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -145,6 +145,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # Login URL redirect

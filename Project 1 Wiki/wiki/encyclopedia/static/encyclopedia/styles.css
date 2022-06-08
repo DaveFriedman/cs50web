@@ -32,8 +32,8 @@ p {
 .btn-secondary {
     /* dark: 1 */
     background-color: #705548;
-    /* dark: 2 */ 
-    border-color: #675045; 
+    /* dark: 2 */
+    border-color: #675045;
     font-weight: 500;
 }
 .btn-secondary:hover,
@@ -41,7 +41,7 @@ p {
 .btn-secondary:focus,
 .btn-secondary.active {
     /* dark: 3 */
-    background-color: #5F4B43; 
+    background-color: #5F4B43;
     border-color: #5F4B43;
 }
 
@@ -87,7 +87,7 @@ p {
     /* dark: 4 */
     /* background-color: #564540;  */
     /* dark: 5 */
-    background-color: #4E403E; 
+    background-color: #4E403E;
     height: 100vh;
     padding: 20px;
 }
@@ -98,7 +98,7 @@ p {
 }
 
  /* Small devices (landscape phones, less than 768px) */
-@media (max-width: 767.98px) { 
+@media (max-width: 767.98px) {
     p {
         width: 100%;
     }

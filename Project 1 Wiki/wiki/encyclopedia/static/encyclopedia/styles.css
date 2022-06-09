@@ -97,6 +97,10 @@ p {
     margin-bottom: 0;
 }
 
+.modal-content {
+    background-color: #705548;
+}
+
  /* Small devices (landscape phones, less than 768px) */
 @media (max-width: 767.98px) {
     p {

@@ -71,7 +71,7 @@
 </div>
 
 <div class="modal fade" name="about-modal" id="about-modal" tabindex="-1" aria-labelledby="about-label" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="about-label">About this site</h3>
@@ -80,7 +80,30 @@
                 </button>
             </div>
             <div class="modal-body">
-                lorem ipsum
+                <p>Hi, I'm Dave!</p>
+                    <p>
+                        DMF Network is, like Twitter, a social network site for users to write and edit posts, Like and Dislike posts, and follow other users.
+                        I built this site while working through <a href="https://cs50.harvard.edu/web/2020/">Harvard's CS50 Web</a> course, project <a href="https://cs50.harvard.edu/web/2020/projects/4/network/">Network</a>.
+                    </p>
+                    <p>
+                        Write what's on your mind!<br>
+                        You can register an account, or you can log in with the username "guest" and the password. The password is my full name, as it appears in my github links.<br>
+                    </p>
+                    <p>
+                        DMF Network is built with Django, using Django templates styled with Bootstrap.<br>
+                        This site is responsive and is best viewed with any modern browser on any size device.<br>
+                        Users, Posts, Likes, Dislikes, and Follows are stored in SQLite and queried with the Django ORM.<br>
+                        Post edits and Likes, Dislikes, and Follows are made asynchronously with Javascript.<br>
+                    </p>
+                    <p>
+                        DMF Mail is deployed on an AWS EC2 instance, with uWSGI as the application server.<br>
+                        Nginx is configured as a reverse proxy, serves static files for this and other sites on the instance, and logs all traffic.<br>
+                        Namecheap is the domain registrar, and LetsEncrypt provides the TLS certificate.<br>
+                    </p>
+                    <p>
+                        This site's code is viewable on my github: <a href="https://github.com/DaveFriedman/cs50web">https://github.com/DaveFriedman/cs50web</a>.<br>
+                        Say hello! <a href="https://davefriedman.github.io/contact">https://davefriedman.github.io/contact</a>.
+                    </p>
             </div>
             <div class="modal-footer btn-group">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>

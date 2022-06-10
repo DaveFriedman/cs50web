@@ -73,6 +73,17 @@ p {
     width: 85%;
 }
 
+.modal-body a:link {
+    color: gold;
+}
+.modal-body a:visited,
+.modal-body a:hover {
+    color: goldenrod;
+}
+.modal-body p {
+    width: 100%;
+}
+
 .row {
     margin: 0;
 }

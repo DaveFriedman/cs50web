@@ -17,7 +17,7 @@
             <div class="sidebar col-lg-3 col-md-4">
 
                 <h2>DMF Wiki</h2>
-                <button id="about" type="button" class="btn btn-warning" data-toggle="modal" data-target="#about-modal">
+                <button id="about" type="button" class="btn btn-info" data-toggle="modal" data-target="#about-modal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle "
                     viewBox="0 0 16 16">
                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -59,8 +59,8 @@
             </div>
 
             <div class="modal fade" name="about-modal" id="about-modal" tabindex="-1" aria-labelledby="about-label" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content" role="document">
                         <div class="modal-header">
                             <h3 class="modal-title" id="about-label">About this site</h3>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -68,7 +68,27 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            lorem ipsum
+                            <p>Hi, I'm Dave!</p>
+                            <p>
+                                DMF Wiki is an encyclopedia, like Wikipedia, that anyone can edit.
+                                I built this site while working through <a href="https://cs50.harvard.edu/web/2020/">Harvard's CS50 Web</a> course, project <a href="https://cs50.harvard.edu/web/2020/projects/1/wiki/">Wiki</a>.
+                            </p>
+                            <p>While you're here, write an entry!</p>
+                            <p>
+                                DMF Wiki is built with Django, using Django templates styled with Bootstrap.<br>
+                                This site is responsive and is best viewed with any modern browser on any size device.<br>
+                                Wiki entries are stored as Markdown files, and validated and displayed as HTML.<br>
+                                The Random and Search features are written in Python.<br>
+                            </p>
+                            <p>
+                                DMF Wiki is deployed on an AWS EC2 instance, with uWSGI as the application server.<br>
+                                Nginx is configured as a reverse proxy, serves static files for this and other sites on the instance, and logs all traffic.<br>
+                                Namecheap is the domain registrar, and LetsEncrypt provides the TLS certificate.<br>
+                            </p>
+                            <p>
+                                This site's code is viewable on my github: <a href="https://github.com/DaveFriedman/cs50web">https://github.com/DaveFriedman/cs50web</a><br>
+                                Say hello! <a href="https://davefriedman.github.io/contact">https://DaveFriedman.github.io/contact</a>
+                            </p>
                         </div>
                         <div class="modal-footer btn-group">
                             <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>

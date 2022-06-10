@@ -35,7 +35,7 @@
     </div>
 
     <div class="modal fade" name="about-modal" id="about-modal" tabindex="-1" aria-labelledby="about-label" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title" id="about-label">About this site</h3>
@@ -44,7 +44,30 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    lorem ipsum
+                    <p>Hi, I'm Dave!</p>
+                    <p>
+                        DMF Mail is an email client for a self-contained email ecosystem.<br>
+                        I built this site while working through <a href="https://cs50.harvard.edu/web/2020/">Harvard's CS50 Web</a> course, project <a href="https://cs50.harvard.edu/web/2020/projects/3/mail/">Mail</a>.
+                    </p>
+                    <p>
+                        Explore and send an email!<br>
+                        You can register an account of your own, or you can log in using "ann@example.com" or "bob@example.com". The password for both example accounts is my full name, as it appears in my github links.<br>
+                        This site is a demo - emails sent and received on this site can only be viewed on this site and there is no outward-facing email server.<br>
+                    </p>
+                    <p>
+                        DMF Mail uses Javascript to send and fetch emails in JSON format from Django.<br>
+                        Users and emails are stored in a SQLite database and queried with the Django ORM.<br>
+                        The UI is composed with Django templates and styled with Bootstrap.
+                    </p>
+                    <p>
+                        DMF Mail is deployed on an AWS EC2 instance, with uWSGI as the application server.<br>
+                        Nginx is configured as a reverse proxy, serves static files for this and other sites on the instance, and logs all traffic.<br>
+                        Namecheap is the domain registrar, and LetsEncrypt provides the TLS certificate.<br>
+                    </p>
+                    <p>
+                        This site's code is viewable on my github: <a href="https://github.com/davefriedman/cs50web">https://github.com/davefriedman/cs50web</a>.<br>
+                        Say hello! <a href="https://davefriedman.github.io/contact">https://davefriedman.github.io/contact</a>.
+                    </p>
                 </div>
                 <div class="modal-footer btn-group">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>

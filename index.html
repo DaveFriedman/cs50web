@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="shortcut icon" href="./favicon.ico">
+    <title>Search</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#" id="about-link">About this site</a></li>
+                <li><a href="./image.html">Search Images</a></li>
+                <li><a href="./advanced.html">Advanced Search</a></li>
+            </ul>
+        </nav>
+
+        <div class="hero">
+            <h1><span class="blue">S</span><span class="red">e</span><span
+            class="yellow">a</span><span class="blue">r</span><span
+            class="green">c</span><span class="red">h</span></h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="search">
+            <form action="https://google.com/search" method="GET">
+
+                <div class="bar">
+                    <input type="text" name="q">
+                </div>
+
+                <div class="submit">
+                    <input type="submit" value="Google Search">
+                    <input type="submit" name="btnI" value="I'm Feeling Lucky">
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <div id="about-modal" class="modal">
+        <div class="modal-body">
+            <span id="close" class="close">&times;</span>
+            <p>Hi, I'm Dave!</p>
+            <br>
+            <p>
+                DMF Search is a recreation of the user interfaces for Google Search, Image Search, and Advanced Search.<br>
+                I built this site while working through <a href="https://cs50.harvard.edu/web/2020/">Harvard's CS50 Web</a> course, project <a href="https://cs50.harvard.edu/web/2020/projects/0/search/">Search</a>.
+            </p>
+            <br>
+            <p>DMF Search is built with HTML and CSS, and is deployed using <a href="https://htmlpreview.github.io/">https://htmlpreview.github.io/</a>.</p>
+            <br>
+            <p>
+                This site's code is viewable on my github: <a href="https://github.com/davefriedman/cs50web">https://github.com/davefriedman/cs50web</a>.<br>
+                Say hello! <a href="https://davefriedman.github.io/contact">https://davefriedman.github.io/contact</a>.
+            </p>
+            <hr>
+            <input id="ok" class="ok" value="Ok">
+      </div>
+
+      <script>
+      var modal = document.getElementById("about-modal");
+      var aboutLink = document.getElementById("about-link");
+      var closeBtn = document.getElementById("close");
+      var okBtn = document.getElementById("ok");
+
+      aboutLink.onclick = function() {
+        modal.style.display = "block";
+      }
+      closeBtn.onclick = function() {
+        modal.style.display = "none";
+      }
+      okBtn.onclick = function() {
+        modal.style.display = "none";
+      }
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+      </script>
+</body>
+</html>
